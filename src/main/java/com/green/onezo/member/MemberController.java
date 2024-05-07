@@ -180,9 +180,9 @@ public class MemberController {
     }
 
 
-    // 비밀번호 찾기
+    // 비밀번호 찾기 -> 임시 비밀번호 발급
     @GetMapping("/findPw/{userId}/{name}/{phone}")
-    @Operation(summary = "비밀번호 찾기",
+    @Operation(summary = "임시 비밀번호 발급",
             description = "회원 아이디와 이름, 전화번호를 입력하면 임시 비밀번호가 발행됩니다. 로그인시에 비밀번호 변경하세요 \n" +
                     "임시 비밀번호를 발급하게 됩니다.")
     public ResponseEntity<FindDto.PasswordRes> findPassword(
