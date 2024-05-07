@@ -40,6 +40,7 @@ public class SecurityConfig {
 //                                        .anyRequest().permitAll()
 //                                        requestMatcher : 특정경로에 대한 권한 설정
                                         .requestMatchers(
+                                                "/error",
                                                 "/",
                                                 "/index.html",
                                                 "/auth/**",

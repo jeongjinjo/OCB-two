@@ -1,5 +1,6 @@
 //package com.green.onezo.conf;
 //
+//import com.fasterxml.jackson.databind.ObjectMapper;
 //import com.green.onezo.enum_column.Role;
 //import com.green.onezo.member.Member;
 //import io.jsonwebtoken.Claims;
@@ -53,7 +54,7 @@
 //            List<SimpleGrantedAuthority> roles =new ArrayList<>();
 //            roles.add(new SimpleGrantedAuthority(jws.getPayload().get("userId").toString()));
 //            System.out.println(roles);
-
+//
 //             String nickname = payload.getOrDefault("nickname", "").toString();
 //                String phone = payload.getOrDefault("phone", "").toString();
 //

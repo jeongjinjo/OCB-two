@@ -1,16 +1,20 @@
 package com.green.onezo.member;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.green.onezo.global.error.BizException;
 import com.green.onezo.jwt.JwtTokenDto;
 
 import com.green.onezo.jwt.JwtUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.jasypt.util.text.BasicTextEncryptor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -24,6 +28,7 @@ public class MemberController {
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
     private final MemberDetailsService memberDetailsService;
+    private final PasswordEncoder passwordEncoder;
 
     //회원가입
     @Operation(summary = "회원 가입",
@@ -89,13 +94,13 @@ public class MemberController {
     @Operation(summary = "로그인 기능",
             description = "아이디(0505수정: 아이디는 이메일 형식이 아닙니다!) ,비밀번호를 DB와 대조해 회원이라면 로그인")
     @PostMapping("/login")
-    public ResponseEntity<JwtTokenDto> login(@RequestBody @Valid LoginDto.logReq loginDto) {
+    public ResponseEntity login(@RequestBody @Valid LoginDto.logReq loginDto) {
         String userId = loginDto.getUserId();
         String password = loginDto.getPassword();
 
         boolean isAuthenticated = memberService.authenticate(userId, password);
         if (!isAuthenticated) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 비밀번호가 틀렸습니다. 아이디와 비밀번호를 확인하세요");
         } else {
             UserDetails userDetails = memberDetailsService.loadUserByUsername(userId);
             String accessToken = jwtUtil.generateAccessToken(userDetails);
@@ -178,16 +183,21 @@ public class MemberController {
     // 비밀번호 찾기
     @GetMapping("/findPw/{userId}/{name}/{phone}")
     @Operation(summary = "비밀번호 찾기",
-            description = "회원 아이디와 이름, 전화번호를 입력하면 비밀번호가 반환됩니다.")
+            description = "회원 아이디와 이름, 전화번호를 입력하면 임시 비밀번호가 발행됩니다. 로그인시에 비밀번호 변경하세요 \n" +
+                    "임시 비밀번호를 발급하게 됩니다.")
     public ResponseEntity<FindDto.PasswordRes> findPassword(
             @Parameter(description = "아이디", required = true) @PathVariable String userId,
             @Parameter(description = "이름", required = true) @PathVariable String name,
             @Parameter(description = "전화번호", required = true) @PathVariable String phone
     ) {
         try {
-            String password = memberService.findPassword(userId, name, phone);
-            return ResponseEntity.ok(new FindDto.PasswordRes(password));
-        } catch (BizException e) {
+            boolean result = memberService.updatePassword(userId, name, phone);
+            if(result)
+                return ResponseEntity.ok(new FindDto.PasswordRes("임시1234"));
+            else
+                return ResponseEntity.ok(new FindDto.PasswordRes("아이디 이름 전화번호를 다시 입력하세요"));
+
+        } catch (ExpiredJwtException e) {
             return ResponseEntity.badRequest().build();
         }
     }
