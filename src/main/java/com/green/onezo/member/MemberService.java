@@ -54,6 +54,7 @@ public class MemberService {
     //    public Optional<Member> authenticate(String userId,String password) {
 //        return memberRepository.findByUserIdAndPassword(userId,password);
 //    }
+
     public boolean authenticate(String userId, String password) {
 //        Member member = memberRepository.findByUserId(userId).orElseThrow(
 //                () -> new NoSuchElementException("회원을 찾을 수 없습니다. ID: " + userId));
@@ -80,36 +81,37 @@ public class MemberService {
     // 회원정보수정
     @Transactional
     public void memberUpdate(Long memberId, MemberUpdateDto.UpdateReq updateDtoReq) {
-//        Member member = memberRepository.findById(memberId)
-//                .orElseThrow(() -> new IllegalArgumentException("해당하는 회원아이디를 찾을 수 없습니다."));
         Member member = memberRepository.findById(memberId)
                 .filter(m -> m.getResignYn().equals(ResignYn.N))
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 회원아이디를 찾을 수 없거나 탈퇴한 회원입니다."));
 
         if (updateDtoReq.getPassword() != null && !updateDtoReq.getPassword().isEmpty()) {
-            if (!updateDtoReq.getPassword().equals(passwordEncoder.encode(updateDtoReq.getPasswordCheck()))) {
-                throw new BizException("비밀번호가 일치하지 않습니다.");
+            if (!updateDtoReq.getPassword().equals(updateDtoReq.getPasswordCheck())) {
+                throw new BizException("재확인 비밀번호가 일치하지 않습니다.");
             }
             member.setPassword(passwordEncoder.encode(updateDtoReq.getPassword()));
         }
-//        if (updateDtoReq.getPassword() != null && !updateDtoReq.getPassword().isEmpty()) {
-//            member.setPassword(updateDtoReq.getPassword());
-//        }
+
         if (updateDtoReq.getName() != null && !updateDtoReq.getName().isEmpty()) {
             member.setName(updateDtoReq.getName());
         }
-        if (updateDtoReq.getNickname() != null && !updateDtoReq.getNickname().isEmpty()) {
-            if (memberRepository.findByNickname(updateDtoReq.getNickname()).isPresent()) {
+        if (updateDtoReq.getNickname() != null && !updateDtoReq.getNickname().isEmpty() && !updateDtoReq.getNickname().equals(member.getNickname())) {
+            if (memberRepository.findByNicknameAndResignYn(updateDtoReq.getNickname(), ResignYn.N).isPresent()) {
                 throw new BizException("닉네임 중복입니다.");
             }
             member.setNickname(updateDtoReq.getNickname());
+        } else {
+            member.setNickname(updateDtoReq.getNickname());
         }
-        if (updateDtoReq.getPhone() != null && !updateDtoReq.getPhone().isEmpty()) {
-            if (memberRepository.findByPhone(updateDtoReq.getPhone()).isPresent()) {
+        if (updateDtoReq.getPhone() != null && !updateDtoReq.getPhone().isEmpty() && !updateDtoReq.getPhone().equals(member.getPhone())) {
+            if (memberRepository.findByPhoneAndResignYn(updateDtoReq.getPhone(), ResignYn.N).isPresent()) {
                 throw new BizException("전화번호 중복입니다.");
             }
             member.setPhone(updateDtoReq.getPhone());
+        } else {
+            member.setPhone(updateDtoReq.getPhone());
         }
+
         memberRepository.save(member);
     }
 
@@ -120,20 +122,18 @@ public class MemberService {
                 .orElseThrow(() -> new BizException("해당하는 회원아이디를 찾을 수 없거나 탈퇴한 회원입니다."));
 
         if (!member.getUserId().equals(resignReq.getUserId()) ||
-                !member.getPassword().equals(passwordEncoder.encode(resignReq.getPassword())) ||
+                !passwordEncoder.matches(resignReq.getPassword(), member.getPassword()) ||
                 !member.getPhone().equals(resignReq.getPhone())) {
             throw new BizException("회원 정보가 잘못되었습니다.");
         }
 
         member.setResignYn(ResignYn.Y);
         memberRepository.save(member);
-
     }
 
 
     // 아이디 찾기
     public String findUserId(String name, String phone) throws BizException {
-        //return memberRepository.findByNameAndPhone(name, phone)
         return memberRepository.findByNameAndPhoneAndResignYn(name, phone, ResignYn.N)
                 .map(member -> member.getUserId().substring(0, member.getUserId().length() - 3) + "***")
                 .orElseThrow(() -> new BizException("해당 이름과 전화번호로 등록된 회원이 없거나 탈퇴하였습니다."));
