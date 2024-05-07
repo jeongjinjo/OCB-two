@@ -9,6 +9,8 @@ import lombok.*;
 @NoArgsConstructor
 public class JwtTokenDto {
 
+    private long memberId;
+
     private String accessToken;
     private String refeshToken;
 

@@ -3,6 +3,7 @@ package com.green.onezo.member;
 import com.green.onezo.enum_column.ResignYn;
 import com.green.onezo.global.error.BizException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -59,6 +60,7 @@ public class MemberService {
         return member != null && passwordEncoder.matches(password, member.getPassword());
     }
 
+ 
 
     // 회원 아이디로 pk 찾기
     public Optional<Long> findMemberId(String userId) {
