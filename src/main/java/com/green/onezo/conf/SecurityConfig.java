@@ -41,11 +41,20 @@ public class SecurityConfig {
 //                                        requestMatcher : 특정경로에 대한 권한 설정
                                         .requestMatchers(
                                                 "/error",
-                                                "/menus/**",
-                                                "/menuAll",
                                                 "/",
                                                 "/index.html",
-                                                "/auth/**",
+
+                                                "/auth/signUp",
+                                                "/auth/checkId",
+                                                "/auth/passwordCheck",
+                                                "/auth/checkNickname",
+                                                "/auth/login",
+                                                "/auth/{userId}",
+                                                "/auth/findId/{name}/{phone}",
+                                                "/auth/findPw/{userId}/{name}/{phone}",
+
+                                                "/menus/**",
+                                                "/menuAll",
                                                 "/swagger-ui/**",
                                                 "/v3/api-docs/**")
                                         .permitAll()

@@ -1,5 +1,6 @@
 package com.green.onezo.member;
 
+import com.green.onezo.enum_column.ResignYn;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -24,4 +25,16 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByNameAndPhone(String name, String phone);
 
     Optional<Member> findByUserIdAndNameAndPhone(String userId, String name, String phone);
+
+    Optional<Member> findByIdAndResignYn(Long id, ResignYn resignYn);
+
+    Optional<Member> findByNameAndPhoneAndResignYn(String name, String phone, ResignYn resignYn);
+
+    Optional<Member> findByUserIdAndNameAndPhoneAndResignYn(String userId, String name, String phone, ResignYn resignYn);
+
+    Optional<Member> findByUserIdAndResignYn(String userId, ResignYn resignYn);
+
+    Optional<Member> findByNicknameAndResignYn(String nickname, ResignYn resignYn);
+
+    Optional<Member> findByPhoneAndResignYn(String phone, ResignYn resignYn);
 }

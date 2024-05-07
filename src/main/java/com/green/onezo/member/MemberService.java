@@ -23,16 +23,17 @@ public class MemberService {
     @Transactional
     public Member signup(SignDto.signReq signDtoReq) {
 
-        Optional<Member> idmember = memberRepository.findByUserId(signDtoReq.getUserId());
-        if (idmember.isPresent()) {
+        //Optional<Member> idmember = memberRepository.findByUserId(signDtoReq.getUserId());
+        Optional<Member> idMember = memberRepository.findByUserIdAndResignYn(signDtoReq.getUserId(), ResignYn.N);
+        if (idMember.isPresent()) {
             throw new BizException("아이디 중복입니다.");
         }
-        Optional<Member> nickmember = memberRepository.findByNickname(signDtoReq.getNickname());
-        if (nickmember.isPresent()) {
+        Optional<Member> nickMember = memberRepository.findByNicknameAndResignYn(signDtoReq.getNickname(), ResignYn.N);
+        if (nickMember.isPresent()) {
             throw new BizException("닉네임 중복입니다.");
         }
-        Optional<Member> pmember = memberRepository.findByPhone(signDtoReq.getPhone());
-        if (pmember.isPresent()) {
+        Optional<Member> pMember = memberRepository.findByPhoneAndResignYn(signDtoReq.getPhone(), ResignYn.N);
+        if (pMember.isPresent()) {
             throw new BizException("핸드폰 번호 중복입니다.");
         }
 
@@ -54,9 +55,18 @@ public class MemberService {
 //        return memberRepository.findByUserIdAndPassword(userId,password);
 //    }
     public boolean authenticate(String userId, String password) {
-        Member member = memberRepository.findByUserId(userId).orElseThrow(
-                () -> new NoSuchElementException("회원을 찾을 수 없습니다. ID: " + userId));
-        return member != null && passwordEncoder.matches(password, member.getPassword());
+//        Member member = memberRepository.findByUserId(userId).orElseThrow(
+//                () -> new NoSuchElementException("회원을 찾을 수 없습니다. ID: " + userId));
+//        return member != null && passwordEncoder.matches(password, member.getPassword());
+
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new NoSuchElementException("회원을 찾을 수 없습니다. ID: " + userId));
+
+        if (member.getResignYn() == ResignYn.Y) {
+            throw new IllegalArgumentException("탈퇴한 회원입니다.");
+        }
+
+        return passwordEncoder.matches(password, member.getPassword());
     }
 
 
@@ -70,18 +80,21 @@ public class MemberService {
     // 회원정보수정
     @Transactional
     public void memberUpdate(Long memberId, MemberUpdateDto.UpdateReq updateDtoReq) {
+//        Member member = memberRepository.findById(memberId)
+//                .orElseThrow(() -> new IllegalArgumentException("해당하는 회원아이디를 찾을 수 없습니다."));
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("해당하는 회원아이디를 찾을 수 없습니다."));
+                .filter(m -> m.getResignYn().equals(ResignYn.N))
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 회원아이디를 찾을 수 없거나 탈퇴한 회원입니다."));
 
         if (updateDtoReq.getPassword() != null && !updateDtoReq.getPassword().isEmpty()) {
-            if (!updateDtoReq.getPassword().equals(updateDtoReq.getPasswordCheck())) {
+            if (!updateDtoReq.getPassword().equals(passwordEncoder.encode(updateDtoReq.getPasswordCheck()))) {
                 throw new BizException("비밀번호가 일치하지 않습니다.");
             }
-            member.setPassword(updateDtoReq.getPassword());
+            member.setPassword(passwordEncoder.encode(updateDtoReq.getPassword()));
         }
-        if (updateDtoReq.getPassword() != null && !updateDtoReq.getPassword().isEmpty()) {
-            member.setPassword(updateDtoReq.getPassword());
-        }
+//        if (updateDtoReq.getPassword() != null && !updateDtoReq.getPassword().isEmpty()) {
+//            member.setPassword(updateDtoReq.getPassword());
+//        }
         if (updateDtoReq.getName() != null && !updateDtoReq.getName().isEmpty()) {
             member.setName(updateDtoReq.getName());
         }
@@ -103,10 +116,11 @@ public class MemberService {
     // 회원탈퇴
     public void memberResign(Long memberId, MemberResignDto.ResignReq resignReq) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new BizException("해당하는 회원아이디를 찾을 수 없습니다."));
+                .filter(m -> m.getResignYn().equals(ResignYn.N))
+                .orElseThrow(() -> new BizException("해당하는 회원아이디를 찾을 수 없거나 탈퇴한 회원입니다."));
 
         if (!member.getUserId().equals(resignReq.getUserId()) ||
-                !member.getPassword().equals(resignReq.getPassword()) ||
+                !member.getPassword().equals(passwordEncoder.encode(resignReq.getPassword())) ||
                 !member.getPhone().equals(resignReq.getPhone())) {
             throw new BizException("회원 정보가 잘못되었습니다.");
         }
@@ -119,21 +133,22 @@ public class MemberService {
 
     // 아이디 찾기
     public String findUserId(String name, String phone) throws BizException {
-        return memberRepository.findByNameAndPhone(name, phone)
+        //return memberRepository.findByNameAndPhone(name, phone)
+        return memberRepository.findByNameAndPhoneAndResignYn(name, phone, ResignYn.N)
                 .map(member -> member.getUserId().substring(0, member.getUserId().length() - 3) + "***")
-                .orElseThrow(() -> new BizException("해당 이름과 전화번호로 등록된 회원이 없습니다."));
+                .orElseThrow(() -> new BizException("해당 이름과 전화번호로 등록된 회원이 없거나 탈퇴하였습니다."));
     }
 
     // 비밀번호 찾기
     public String findPassword(String userId, String name, String phone) throws BizException {
-        return memberRepository.findByUserIdAndNameAndPhone(userId, name, phone)
+        return memberRepository.findByUserIdAndNameAndPhoneAndResignYn(userId, name, phone, ResignYn.N)
                 .map(Member::getPassword)
-                .orElseThrow(() -> new BizException("해당 아이디, 닉네임 및 전화번호로 등록된 회원이 없습니다."));
+                .orElseThrow(() -> new BizException("해당 아이디, 이름 및 전화번호로 등록된 회원이 없습니다."));
     }
 
     // 회원 정보 조회
     public FindDto.InfoRes getMemberInfo(Long memberId) {
-        Optional<Member> memberOptional = memberRepository.findById(memberId);
+        Optional<Member> memberOptional = memberRepository.findByIdAndResignYn(memberId, ResignYn.N);
         if (memberOptional.isPresent()) {
             Member member = memberOptional.get();
             return FindDto.InfoRes.builder()
