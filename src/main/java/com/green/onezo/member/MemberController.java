@@ -103,12 +103,12 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 비밀번호가 틀렸습니다. 아이디와 비밀번호를 확인하세요");
         } else {
             UserDetails userDetails = memberDetailsService.loadUserByUsername(userId);
+            Member member = memberRepository.findByUserId(userId).orElse(new Member());
             String accessToken = jwtUtil.generateAccessToken(userDetails);
             String refreshToken = jwtUtil.generateRefreshToken(userDetails);
 
-            JwtTokenDto jwtTokenDto = new JwtTokenDto(accessToken, refreshToken);
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    jwtTokenDto);
+            JwtTokenDto jwtTokenDto = new JwtTokenDto(member.getId(), accessToken, refreshToken);
+            return ResponseEntity.status(HttpStatus.OK).body(jwtTokenDto);
         }
     }
 
