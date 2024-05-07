@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 public class LoginDto {
-
     @Getter
     @Setter
     @ToString
