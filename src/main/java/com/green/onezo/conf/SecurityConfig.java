@@ -40,6 +40,8 @@ public class SecurityConfig {
 //                                        .anyRequest().permitAll()
 //                                        requestMatcher : 특정경로에 대한 권한 설정
                                         .requestMatchers(
+                                                "/",
+                                                "/index.html",
                                                 "/auth/**",
                                                 "/swagger-ui/**",
                                                 "/v3/api-docs/**")
