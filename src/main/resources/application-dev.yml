@@ -1,0 +1,29 @@
+spring:
+  messages:
+    basename: messages
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://jjun:3306/onezo?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: 1234
+
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQLDialect
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: none
+    generate-ddl: true
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+
+toss:
+  client:
+    id: test_ck_4yKeq5bgrp5m5N6vb0oL8GX0lzW6
+    secret: test_sk_oEjb0gm23PW4ABRA5w9W8pGwBJn5
+    successUrl: "http://localhost:8080/v1/api/payment/success"
+    failUrl: "http://localhost:8080/v1/api/payment/fail"
+    OriginUrl: "https://api.tosspayments.com/v1/payments/"
