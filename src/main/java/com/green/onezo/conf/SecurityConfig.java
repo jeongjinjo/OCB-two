@@ -41,6 +41,8 @@ public class SecurityConfig {
 //                                        requestMatcher : 특정경로에 대한 권한 설정
                                         .requestMatchers(
                                                 "/error",
+                                                "/menus/**",
+                                                "/menuAll",
                                                 "/",
                                                 "/index.html",
                                                 "/auth/**",
