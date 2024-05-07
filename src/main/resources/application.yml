@@ -1,0 +1,79 @@
+spring:
+  messages:
+    basename: messages
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/onezo?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: 1234
+
+  jwt:
+    AccessTokenSecret: 7KCV7J2A7JWg7JaR6rCA7JiB7KCV7KeE7KGw6rOg7LCs7JqwY2F0ZG9ncjhHbdSN23nf2588NUnsdh
+
+
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQLDialect
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update
+    generate-ddl: true
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      mode: always
+
+  springdoc:
+    swagger-ui:
+      path: /swagger-ui/index.html
+    openapi-ui:
+      path: /v3/api-docs
+
+  openapi: "3.0.0"
+  info:
+    title: catdog
+    version: 1.0.0
+  paths:
+    /auth/**:
+      get:
+        description: 인증이 필요 없는 공개 정보를 검색합니다.
+        responses:
+          '200':
+            description: ok
+      post:
+        description: 인증이 필요 없는 데이터를 제출합니다.
+        responses:
+          '200':
+            description: ok
+      put:
+        description: 인증이 필요 없는 데이터를 제출합니다.
+        responses:
+          '200':
+            description: ok
+      delete:
+        description: 인증이 필요 없는 데이터를 제출합니다.
+        responses:
+          '200':
+            description: ok
+
+#toss 암호화 적용 하기
+toss:
+  client:
+    id: test_ck_4yKeq5bgrp5m5N6vb0oL8GX0lzW6
+    secret: test_sk_oEjb0gm23PW4ABRA5w9W8pGwBJn5
+    successUrl: "http://localhost:8080/v1/api/payment/success"
+    failUrl: "http://localhost:8080/v1/api/payment/fail"
+    OriginUrl: "https://api.tosspayments.com/v1/payments/"
+
+jasypt:
+  encryptor:
+    password: wasdjlkjoIQHNWLIUEOqkA;XDLJakldmaSL
+
+kakao:
+  client:
+    id: ee6034fee6eaca2e42ce04b136729cf7 
+    secret: i25c2321Aa5A9Jy1r6AgrOj2SihPO0Jn
+    redirect: http://loaclhost:8080/oauth/kakao/callback
