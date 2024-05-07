@@ -148,5 +148,16 @@ public class MemberService {
     }
 
 
+    // 영속성 컨텍스트에 있는 내용이 디비와 동기화 되기 때문에 setMethod를 사용하면 update 구문이 날아감
+    @Transactional
+    public boolean updatePassword(String userId, String name, String phone) {
+        Optional<Member> dbMember = memberRepository.findByUserIdAndNameAndPhone(userId, name, phone);
+        if(dbMember.isEmpty()){
+            return false;
+        }else{
+            dbMember.get().setPassword(passwordEncoder.encode("임시1234"));
+            return true;
+        }
+    }
 }
 
