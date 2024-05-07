@@ -1,0 +1,59 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.5'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.green'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-validation:3.2.5'
+
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+	implementation 'p6spy:p6spy:3.9.1'
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.1.1'
+	implementation 'org.modelmapper:modelmapper:3.2.0'
+
+	implementation 'io.jsonwebtoken:jjwt-impl:0.12.5'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.5'
+
+
+	implementation 'org.springframework.boot:spring-boot-starter-security:3.2.5'
+	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'com.mysql:mysql-connector-j'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'com.googlecode.json-simple:json-simple:1.1'
+}
+tasks.withType(JavaCompile) {
+	options.compilerArgs << "-Xlint:deprecation"
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
