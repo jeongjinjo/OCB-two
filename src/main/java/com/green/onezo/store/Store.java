@@ -1,5 +1,6 @@
 package com.green.onezo.store;
 
+import com.green.onezo.enum_column.TakeInOut;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,6 +35,6 @@ public class Store {
     private String storeHours;
 
     @Enumerated(EnumType.STRING)
-    private OrderType orderType;
+    private TakeInOut orderType;
 
 }

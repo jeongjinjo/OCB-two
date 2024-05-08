@@ -8,6 +8,7 @@ import com.green.onezo.enum_column.Role;
 import com.green.onezo.pay.Pay;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,5 +56,9 @@ public class Member {
         pay.setMember(this);
     }
 
+    public Member(CustomUserDetails customUserDetails) {
+        this.userId = customUserDetails.getUserId();
+        this.password =  customUserDetails.getPassword();
+    }
 
 }
