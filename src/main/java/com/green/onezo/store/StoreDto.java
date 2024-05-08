@@ -1,6 +1,7 @@
 package com.green.onezo.store;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.green.onezo.enum_column.TakeInOut;
 import lombok.*;
 
 @Builder
@@ -13,6 +14,8 @@ public class StoreDto {
 
     private String storeName;
     private String address;
+
+
     @JsonIgnore
     private String addressOld;
     @JsonIgnore
@@ -20,6 +23,6 @@ public class StoreDto {
     @JsonIgnore
     private String storeHours;
     @JsonIgnore
-    private OrderType orderType;
+    private TakeInOut orderType;
 
 }

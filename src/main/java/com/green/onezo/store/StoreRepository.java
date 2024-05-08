@@ -1,20 +1,18 @@
 package com.green.onezo.store;
 
-import jakarta.validation.constraints.NotNull;
+import com.green.onezo.enum_column.TakeInOut;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StoreRepository extends JpaRepository<Store, Long> {
-    Store findStoreById(Long id);
+    Optional<Store> findById(Long id);
 
-    List<OrderType> findByOrderType(OrderType orderType);
+    List<TakeInOut> findByOrderType(TakeInOut orderType);
 
-
-    List<Store> findByIdAndStoreNameAndAddressAndAddressOld(Long id, String storeName, String address, String addressOld);
 
 
 }

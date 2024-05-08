@@ -18,9 +18,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@EnableWebSecurity
 @Configuration
 @RequiredArgsConstructor
+@EnableWebSecurity
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -43,7 +43,7 @@ public class SecurityConfig {
                                                 "/error",
                                                 "/",
                                                 "/index.html",
-
+                                                "/image/**",
                                                 "/auth/signUp",
                                                 "/auth/checkId",
                                                 "/auth/passwordCheck",
