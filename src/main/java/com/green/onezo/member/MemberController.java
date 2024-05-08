@@ -30,7 +30,7 @@ public class MemberController {
     private final MemberDetailsService memberDetailsService;
     private final PasswordEncoder passwordEncoder;
 
-    //회원가입
+
     @Operation(summary = "회원 가입",
             description = "회원 가입")
     @PostMapping("signUp")
@@ -90,7 +90,7 @@ public class MemberController {
         }
     }
 
-    //로그인 기능
+
     @Operation(summary = "로그인 기능",
             description = "아이디(0505수정: 아이디는 이메일 형식이 아닙니다!) ,비밀번호를 DB와 대조해 회원이라면 로그인")
     @PostMapping("/login")
