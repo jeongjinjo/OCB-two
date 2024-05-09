@@ -131,11 +131,8 @@ public class CartService {
         }
         return null;
     }
-
-
     @Transactional
     public CartMenuDto update(CartMenuDto cartMenuDto) {
-        System.out.println(cartMenuDto);
         ModelMapper modelMapper = new ModelMapper();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();

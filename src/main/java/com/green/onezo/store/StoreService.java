@@ -57,9 +57,7 @@ public class StoreService {
     @Transactional
     public String insert(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(authentication);
         org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
-
 
         return user.getUsername();
 
