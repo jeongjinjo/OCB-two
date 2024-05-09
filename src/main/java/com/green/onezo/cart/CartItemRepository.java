@@ -18,13 +18,9 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     //select * from cart where member_id = ?;
     List<CartItem> findByMemberId(Long memberId);
 
-    Optional<CartItem> findByMemberAndStoreAndMenu(Member member, Store store, Menu menu);
+//    Optional<CartItem> findByMemberAndStoreAndMenu(Member member, Store store, Menu menu);
     Optional<CartItem> findById(Long id);
 
-    @Transactional
-    @Modifying
-    @Query("UPDATE CartItem ci SET ci.quantity = :quantity, ci.menu.id = :menuId WHERE ci.id = :cartItemId")
-    CartItem updateQuantity(Long cartItemId, int quantity, Long menuId);
 
     Optional<CartItem> findByMemberIdAndStoreId(Long memberId, Long storeId);
 
