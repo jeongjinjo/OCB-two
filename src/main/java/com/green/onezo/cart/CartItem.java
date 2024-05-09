@@ -29,13 +29,6 @@ public class CartItem {
     @JoinColumn(name = "store_id")
     private Store store;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
-
-    @Column(nullable = false)
-    private int quantity;
-
     @Enumerated(EnumType.STRING)
     private TakeInOut takeInOut;
 

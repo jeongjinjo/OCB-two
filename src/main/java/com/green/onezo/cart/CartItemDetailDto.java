@@ -13,12 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CartItemDetailDto {
 
-
     @NotNull(message = "포장여부를 선택하세요")
     private TakeInOut takeInOut;
-//
-//    @JsonIgnore
-//    private Long memberId;
 
     private Long storeId;
 
