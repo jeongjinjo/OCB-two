@@ -19,8 +19,8 @@ public class CartItemDetailDto {
 //
 //    @JsonIgnore
 //    private Long memberId;
-//    @JsonIgnore
-//    private Long storeId;
+
+    private Long storeId;
 
 
 

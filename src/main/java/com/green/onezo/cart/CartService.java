@@ -101,25 +101,33 @@ public class CartService {
 
 
     @Transactional
-    public CartItemDetailDto insert(CartItemDetailDto cartItemDetailDto, Long storeId) {
+    public CartItemDetailDto insert(CartItemDetailDto cartItemDetailDto) {
         ModelMapper modelMapper = new ModelMapper();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
 
-        System.out.println(user);
-
         Optional<Member> memberOptional = memberRepository.findByUserId(user.getUsername());
-        Optional<Store> storeOptional = storeRepository.findById(storeId);
+        Optional<Store> storeOptional = storeRepository.findById(cartItemDetailDto.getStoreId());
         if (memberOptional.isPresent() && storeOptional.isPresent()) {
             Member member = memberOptional.get();
             Store store = storeOptional.get();
 
-            CartItem cartItem = modelMapper.map(cartItemDetailDto, CartItem.class);
-            cartItem.setMember(member);
-            cartItem.setStore(store);
+            List<CartItem> cartItemlist = cartItemRepository.findByMemberId(member.getId());
 
-            cartItem = cartItemRepository.save(cartItem);
-            return modelMapper.map(cartItem, CartItemDetailDto.class);
+            if(cartItemlist.size()<0) {
+                CartItem cartItem = modelMapper.map(cartItemDetailDto, CartItem.class);
+                cartItem.setMember(member);
+                cartItem.setStore(store);
+                cartItem = cartItemRepository.save(cartItem);
+                return modelMapper.map(cartItem, CartItemDetailDto.class);
+            }else{
+                CartItem dbCart = cartItemlist.get(0);
+                dbCart.setStore(store);
+                dbCart.setMenu(null);
+                dbCart.setQuantity(0);
+                dbCart = cartItemRepository.save(dbCart);
+                return modelMapper.map(dbCart, CartItemDetailDto.class);
+            }
         }
         return null;
     }
@@ -127,29 +135,36 @@ public class CartService {
 
     @Transactional
     public CartMenuDto update(CartMenuDto cartMenuDto) {
+        System.out.println(cartMenuDto);
         ModelMapper modelMapper = new ModelMapper();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
 
-        Optional<Member> member = memberRepository.findByUserId(user.getUsername());
-        if (member.isPresent()) {
-            Optional<CartItem> cartItemOptional = cartItemRepository.findById(cartMenuDto.getCartItemId());
-            if (cartItemOptional.isPresent()) {
-                CartItem cartItem = cartItemOptional.get();
-                Long menuId = cartMenuDto.getMenuId();
-                Menu menu = menuRepository.findById(menuId).orElseThrow(() -> new EntityNotFoundException("아이디를 찾을 수 없습니다."));
-                cartItem.setMenu(menu);
-                cartItem.setQuantity(cartMenuDto.getQuantity());
+        Optional<Member> memberOptional = memberRepository.findByUserId(user.getUsername());
+//        Optional<Menu> menuOptional = menuRepository.findById(cartMenuDto.getMenuId());
 
-                cartItemRepository.save(cartItem);
+        if (memberOptional.isPresent()) {
+            // 장바구니 있는 경우
+            List<CartItem> cartItemList = cartItemRepository.findByMemberId(memberOptional.get().getId());
+            CartItem cartItem = cartItemList.get(0);
+            Menu menu = menuRepository.findById(
+                    cartMenuDto.getMenuId()).orElseThrow(
+                            () -> new EntityNotFoundException("아이디를 찾을 수 없습니다."));
 
-                return modelMapper.map(cartItem, CartMenuDto.class);
+            cartItem.setMenu(menu);
+            cartItem.setQuantity(cartMenuDto.getQuantity());
+
+            cartItem = cartItemRepository.save(cartItem);
+            // 장바구니 없는경우
+
+
+            return modelMapper.map(cartItem, CartMenuDto.class);
 
 //                cartItem = cartItemRepository.save(cartItem);
 //
 //                return modelMapper.map(cartItem, CartMenuDto.class);
-            }
         }
+
 
         return cartMenuDto;
 

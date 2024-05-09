@@ -15,10 +15,10 @@ import java.util.Optional;
 @Repository
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 
+    //select * from cart where member_id = ?;
     List<CartItem> findByMemberId(Long memberId);
 
     Optional<CartItem> findByMemberAndStoreAndMenu(Member member, Store store, Menu menu);
-
     Optional<CartItem> findById(Long id);
 
     @Transactional

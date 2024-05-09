@@ -73,14 +73,13 @@ public class CartController {
     @Operation(summary = "로그인한 유저가 장바구니 담기")
     @PostMapping("/insert")
     public ResponseEntity<String> insert(@RequestBody @Valid CartItemDetailDto cartItemDetailDto,
-                                         Long storeId,
                                          Authentication authentication){
         User user =  (User)authentication.getPrincipal();
         if (user == null) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body("JWT 로그인이 필요합니다.");
         }
-        CartItemDetailDto result = cartService.insert(cartItemDetailDto, storeId);
-        if (storeId == null) {
+        CartItemDetailDto result = cartService.insert(cartItemDetailDto);
+        if (result == null) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body("매장을 선택해 주세요");
         }
         return ResponseEntity.status(HttpStatus.OK).body("장바구니에 입력되었습니다.");
