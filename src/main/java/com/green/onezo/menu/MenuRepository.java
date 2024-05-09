@@ -14,5 +14,6 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     Optional<Menu> findById(Long id);
 
     Optional<Menu> findByMenuImage(String menuImage);
+    Menu findByMenuName(String menuName);
 }
 

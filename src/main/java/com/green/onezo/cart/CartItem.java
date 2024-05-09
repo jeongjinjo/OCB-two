@@ -39,4 +39,6 @@ public class CartItem {
     @Enumerated(EnumType.STRING)
     private TakeInOut takeInOut;
 
+
+
 }
