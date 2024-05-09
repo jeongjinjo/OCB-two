@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CartMenuDto {
 
+    @JsonIgnore
     private Long cartItemId;
 
     private Long menuId;
