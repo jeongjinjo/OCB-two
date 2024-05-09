@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -70,11 +72,14 @@ public class CartController {
 
     @Operation(summary = "로그인한 유저가 장바구니 담기")
     @PostMapping("/insert")
-    public ResponseEntity<String> insert(@RequestBody @Valid CartItemDetailDto cartItemDetailDto, Long memberId, Long storeId){
-        CartItemDetailDto result = cartService.insert(cartItemDetailDto, memberId, storeId);
-        if (memberId == null) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저가 없습니다.");
+    public ResponseEntity<String> insert(@RequestBody @Valid CartItemDetailDto cartItemDetailDto,
+                                         Long storeId,
+                                         Authentication authentication){
+        User user =  (User)authentication.getPrincipal();
+        if (user == null) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body("JWT 로그인이 필요합니다.");
         }
+        CartItemDetailDto result = cartService.insert(cartItemDetailDto, storeId);
         if (storeId == null) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body("매장을 선택해 주세요");
         }
@@ -83,9 +88,9 @@ public class CartController {
 
     @Operation(summary = "로그인한 유저가 장바구니 업데이트")
     @PutMapping("/update")
-    public ResponseEntity<String> update(@RequestBody CartMenuDto cartMenuDto, Long cartItemId){
-        CartMenuDto result = cartService.update(cartMenuDto,cartItemId);
-        if (cartItemId == null) {
+    public ResponseEntity<String> update(@RequestBody CartMenuDto cartMenuDto){
+        CartMenuDto result = cartService.update(cartMenuDto);
+        if (result == null) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body("장바구니 아이템을 찾을 수 없습니다.");
         }
 
