@@ -6,7 +6,9 @@ import com.green.onezo.menu.Menu;
 import com.green.onezo.menu.MenuRepository;
 import com.green.onezo.store.Store;
 import com.green.onezo.store.StoreRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.Conditions;
@@ -28,6 +30,9 @@ public class CartService {
     private final MemberRepository memberRepository;
     private final StoreRepository storeRepository;
     private final CartItemRepository cartItemRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     // 장바구니 아이템 추가
     public CartItem addCartItem(CartItemDto.CartItemReq cartItemReq) {
@@ -96,40 +101,39 @@ public class CartService {
 
 
     @Transactional
-    public CartItemDetailDto insert(CartItemDetailDto cartItemDetailDto, Long memberId, Long storeId) {
+    public CartItemDetailDto insert(CartItemDetailDto cartItemDetailDto, Long storeId) {
         ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration().setSkipNullEnabled(true);
-        modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-        if (user != null) {
-            Optional<Member> memberOptional = memberRepository.findById(memberId);
-            Optional<Store> storeOptional = storeRepository.findById(storeId);
-            if (memberOptional.isPresent() && storeOptional.isPresent()) {
-                Member member = memberOptional.get();
-                Store store = storeOptional.get();
 
-                CartItem cartItem = modelMapper.map(cartItemDetailDto, CartItem.class);
-                cartItem.setMember(member);
-                cartItem.setStore(store);
+        System.out.println(user);
 
-                cartItem = cartItemRepository.save(cartItem);
-                return modelMapper.map(cartItem, CartItemDetailDto.class);
+        Optional<Member> memberOptional = memberRepository.findByUserId(user.getUsername());
+        Optional<Store> storeOptional = storeRepository.findById(storeId);
+        if (memberOptional.isPresent() && storeOptional.isPresent()) {
+            Member member = memberOptional.get();
+            Store store = storeOptional.get();
 
-            }
+            CartItem cartItem = modelMapper.map(cartItemDetailDto, CartItem.class);
+            cartItem.setMember(member);
+            cartItem.setStore(store);
+
+            cartItem = cartItemRepository.save(cartItem);
+            return modelMapper.map(cartItem, CartItemDetailDto.class);
         }
         return null;
     }
 
 
     @Transactional
-    public CartMenuDto update(CartMenuDto cartMenuDto, Long cartItemId) {
+    public CartMenuDto update(CartMenuDto cartMenuDto) {
         ModelMapper modelMapper = new ModelMapper();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-        if (user != null) {
-            Optional<CartItem> cartItemOptional = cartItemRepository.findById(cartItemId);
+
+        Optional<Member> member = memberRepository.findByUserId(user.getUsername());
+        if (member.isPresent()) {
+            Optional<CartItem> cartItemOptional = cartItemRepository.findById(cartMenuDto.getCartItemId());
             if (cartItemOptional.isPresent()) {
                 CartItem cartItem = cartItemOptional.get();
                 Long menuId = cartMenuDto.getMenuId();
@@ -137,15 +141,21 @@ public class CartService {
                 cartItem.setMenu(menu);
                 cartItem.setQuantity(cartMenuDto.getQuantity());
 
-                cartItem = cartItemRepository.save(cartItem);
+                cartItemRepository.save(cartItem);
 
                 return modelMapper.map(cartItem, CartMenuDto.class);
 
-
+//                cartItem = cartItemRepository.save(cartItem);
+//
+//                return modelMapper.map(cartItem, CartMenuDto.class);
             }
         }
+
         return cartMenuDto;
+
     }
+
 }
+
 
 
