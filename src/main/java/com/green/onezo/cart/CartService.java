@@ -11,7 +11,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,6 +29,7 @@ public class CartService {
     private final MemberRepository memberRepository;
     private final StoreRepository storeRepository;
     private final CartItemRepository cartItemRepository;
+    private final CartDetailRepository cartDetailRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -50,21 +50,19 @@ public class CartService {
             throw new RuntimeException("재고가 부족합니다.");
         }
 
-        Optional<CartItem> existingCartItem = cartItemRepository.findByMemberAndStoreAndMenu(member, store, menu);
-        if (existingCartItem.isPresent()) {
-            CartItem cartItem = existingCartItem.get();
-            cartItem.setQuantity(cartItem.getQuantity() + cartItemReq.getQuantity()); // 기존 수량에 추가
-            return cartItemRepository.save(cartItem);
-        } else {
-            // 새로운 아이템 생성
-            CartItem cartItem = CartItem.builder()
-                    .member(member)
-                    .store(store)
-                    .menu(menu)
-                    .quantity(cartItemReq.getQuantity())
-                    .build();
-            return cartItemRepository.save(cartItem);
-        }
+//        Optional<CartItem> existingCartItem = cartItemRepository.findByMemberAndStoreAndMenu(member, store, menu);
+//        if (existingCartItem.isPresent()) {
+//            CartItem cartItem = existingCartItem.get();
+//            return cartItemRepository.save(cartItem);
+//        } else {
+//            // 새로운 아이템 생성
+//            CartItem cartItem = CartItem.builder()
+//                    .member(member)
+//                    .store(store)
+//                    .build();
+//            return cartItemRepository.save(cartItem);
+//        }
+        return null;
     }
 
     // 장바구니 조회
@@ -73,10 +71,7 @@ public class CartService {
                 .map(item -> CartItemDto.CartItemRes.builder()
                         .cartItemId(item.getId())
                         .storeName(item.getStore().getStoreName())
-                        .menuName(item.getMenu().getMenuName())
                         //.menuImage(item.getMenu().getMenuImage())
-                        .quantity(item.getQuantity())
-                        .price(item.getMenu().getPrice())
                         .address(item.getStore().getAddress())
                         .build())
                 .collect(Collectors.toList());
@@ -89,7 +84,6 @@ public class CartService {
     public void updateCartItem(Long cartItemId, int quantity) {
         CartItem cartItem = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 장바구니 아이템을 찾을 수 없습니다."));
-        cartItem.setQuantity(quantity);
         cartItemRepository.save(cartItem);
     }
 
@@ -111,7 +105,6 @@ public class CartService {
         if (memberOptional.isPresent() && storeOptional.isPresent()) {
             Member member = memberOptional.get();
             Store store = storeOptional.get();
-
             List<CartItem> cartItemlist = cartItemRepository.findByMemberId(member.getId());
 
             if(cartItemlist.size()<0) {
@@ -123,8 +116,6 @@ public class CartService {
             }else{
                 CartItem dbCart = cartItemlist.get(0);
                 dbCart.setStore(store);
-                dbCart.setMenu(null);
-                dbCart.setQuantity(0);
                 dbCart = cartItemRepository.save(dbCart);
                 return modelMapper.map(dbCart, CartItemDetailDto.class);
             }
@@ -132,40 +123,39 @@ public class CartService {
         return null;
     }
     @Transactional
-    public CartMenuDto update(CartMenuDto cartMenuDto) {
+    public CartDetailDto update(CartDetailDto cartDetailDto) {
         ModelMapper modelMapper = new ModelMapper();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-
-        Optional<Member> memberOptional = memberRepository.findByUserId(user.getUsername());
-//        Optional<Menu> menuOptional = menuRepository.findById(cartMenuDto.getMenuId());
-
-        if (memberOptional.isPresent()) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        User user = (User) authentication.getPrincipal();
+//
+//        Optional<Member> memberOptional = memberRepository.findByUserId(user.getUsername());
+//        Optional<CartDetail> cartDetailOptional = cartDetailRepository.findById(cartDetailDto.getCartDetailId());
+        Optional<CartItem> cartItemOptional = cartItemRepository.findById(cartDetailDto.getCartId());
+        if (cartItemOptional.isPresent()) {
             // 장바구니 있는 경우
-            List<CartItem> cartItemList = cartItemRepository.findByMemberId(memberOptional.get().getId());
-            CartItem cartItem = cartItemList.get(0);
-            Menu menu = menuRepository.findById(
-                    cartMenuDto.getMenuId()).orElseThrow(
-                            () -> new EntityNotFoundException("아이디를 찾을 수 없습니다."));
+//            CartItem cartItemList = cartItemRepository.findByMemberId(memberOptional.get().getId());
+//            Long cartDetail = cartItemList.getId();
+//            Menu menu = menuRepository.findById(
+//                    cartDetailDto.getMenuId()).orElseThrow(
+//                            () -> new EntityNotFoundException("아이디를 찾을 수 없습니다."));
+            CartDetail cartDetail = new CartDetail();
+            cartDetail.setCartItem(cartItemOptional.get());
+            cartDetail.setQuantity(cartDetailDto.getQuentity());
+            Menu menu = menuRepository.findById(cartDetailDto.getMenuId()).orElseThrow(() -> new EntityNotFoundException("메뉴를 선택해주세요"));
+            cartDetail.setMenu(menu);
 
-            cartItem.setMenu(menu);
-            cartItem.setQuantity(cartMenuDto.getQuantity());
+            cartDetail = cartDetailRepository.save(cartDetail);
 
-            cartItem = cartItemRepository.save(cartItem);
+             modelMapper.map(cartDetail, CartDetailDto.class);
+
             // 장바구니 없는경우
 
-
-            return modelMapper.map(cartItem, CartMenuDto.class);
-
-//                cartItem = cartItemRepository.save(cartItem);
-//
-//                return modelMapper.map(cartItem, CartMenuDto.class);
         }
 
-
-        return cartMenuDto;
-
+        return cartDetailDto;
     }
+
+
 
 }
 

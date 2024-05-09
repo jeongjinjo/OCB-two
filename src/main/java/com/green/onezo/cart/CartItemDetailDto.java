@@ -1,7 +1,6 @@
 package com.green.onezo.cart;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.green.onezo.enum_column.TakeInOut;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

@@ -86,9 +86,9 @@ public class CartController {
     }
 
     @Operation(summary = "로그인한 유저가 장바구니 업데이트")
-    @PutMapping("/update")
-    public ResponseEntity<String> update(@RequestBody CartMenuDto cartMenuDto){
-        CartMenuDto result = cartService.update(cartMenuDto);
+    @PostMapping("/update")
+    public ResponseEntity<String> update(@RequestBody CartDetailDto cartDetailDto){
+        CartDetailDto result = cartService.update(cartDetailDto);
         if (result == null) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body("장바구니 아이템을 찾을 수 없습니다.");
         }
