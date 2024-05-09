@@ -68,6 +68,32 @@ public class CartController {
     }
 
 
+    @Operation(summary = "로그인한 유저가 장바구니 담기")
+    @PostMapping("/insert/{memberId}/{storeId}")
+    public ResponseEntity<String> insert(@RequestBody @Valid CartItemDetailDto cartItemDetailDto, @PathVariable Long memberId, Long storeId){
+        CartItemDetailDto result = cartService.insert(cartItemDetailDto, memberId, storeId);
+        if (memberId == null) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저가 없습니다.");
+        }
+        if (storeId == null) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body("매장을 선택해 주세요");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("장바구니에 입력되었습니다.");
+    }
+
+    @Operation(summary = "로그인한 유저가 장바구니 업데이트")
+    @PutMapping("/update/{cartItemId}")
+    public ResponseEntity<String> update(@RequestBody CartMenuDto cartMenuDto, @PathVariable Long cartItemId){
+        CartMenuDto result = cartService.update(cartMenuDto,cartItemId);
+        if (cartItemId == null) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body("장바구니 아이템을 찾을 수 없습니다.");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body("업데이트 되었습니다.");
+
+    }
+
+
 
 
 

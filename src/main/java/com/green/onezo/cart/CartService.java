@@ -6,8 +6,14 @@ import com.green.onezo.menu.Menu;
 import com.green.onezo.menu.MenuRepository;
 import com.green.onezo.store.Store;
 import com.green.onezo.store.StoreRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.Conditions;
+import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -69,7 +75,9 @@ public class CartService {
                         .address(item.getStore().getAddress())
                         .build())
                 .collect(Collectors.toList());
-    };
+    }
+
+    ;
 
     // 장바구니 아이템 업데이트
     @Transactional
@@ -86,5 +94,58 @@ public class CartService {
         cartItemRepository.deleteById(cartItemId);
     }
 
+
+    @Transactional
+    public CartItemDetailDto insert(CartItemDetailDto cartItemDetailDto, Long memberId, Long storeId) {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setSkipNullEnabled(true);
+        modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        if (user != null) {
+            Optional<Member> memberOptional = memberRepository.findById(memberId);
+            Optional<Store> storeOptional = storeRepository.findById(storeId);
+            if (memberOptional.isPresent() && storeOptional.isPresent()) {
+                Member member = memberOptional.get();
+                Store store = storeOptional.get();
+
+                CartItem cartItem = modelMapper.map(cartItemDetailDto, CartItem.class);
+                cartItem.setMember(member);
+                cartItem.setStore(store);
+
+                cartItem = cartItemRepository.save(cartItem);
+                return modelMapper.map(cartItem, CartItemDetailDto.class);
+
+            }
+        }
+        return null;
+    }
+
+
+    @Transactional
+    public CartMenuDto update(CartMenuDto cartMenuDto, Long cartItemId) {
+        ModelMapper modelMapper = new ModelMapper();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        if (user != null) {
+            Optional<CartItem> cartItemOptional = cartItemRepository.findById(cartItemId);
+            if (cartItemOptional.isPresent()) {
+                CartItem cartItem = cartItemOptional.get();
+                Long menuId = cartMenuDto.getMenuId();
+                Menu menu = menuRepository.findById(menuId).orElseThrow(() -> new EntityNotFoundException("아이디를 찾을 수 없습니다."));
+                cartItem.setMenu(menu);
+                cartItem.setQuantity(cartMenuDto.getQuantity());
+
+                cartItem = cartItemRepository.save(cartItem);
+
+                return modelMapper.map(cartItem, CartMenuDto.class);
+
+
+            }
+        }
+        return cartMenuDto;
+    }
 }
+
 

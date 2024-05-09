@@ -1,8 +1,9 @@
 package com.green.onezo.cart;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.green.onezo.enum_column.TakeInOut;
-import com.green.onezo.member.Member;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,11 +11,17 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CartItemDetail {
+public class CartItemDetailDto {
 
-    private Long cartItemId;
 
+    @NotNull(message = "포장여부를 선택하세요")
     private TakeInOut takeInOut;
+//
+//    @JsonIgnore
+//    private Long memberId;
+//    @JsonIgnore
+//    private Long storeId;
 
-    private Long memberId;
+
+
 }
