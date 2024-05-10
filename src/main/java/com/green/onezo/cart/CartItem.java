@@ -7,6 +7,8 @@ import com.green.onezo.store.Store;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 
 @Entity
 @Getter
@@ -31,6 +33,9 @@ public class CartItem {
 
     @Enumerated(EnumType.STRING)
     private TakeInOut takeInOut;
+
+    @OneToMany(mappedBy = "cartItem")
+    private List<CartDetail> cartDetails;
 
 
 
