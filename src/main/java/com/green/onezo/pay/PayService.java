@@ -55,7 +55,6 @@ public class PayService {
         }
         PayRes payRes;
         try {
-            System.out.println("일러오나");
             Pay pay = payReq.toEntity();
             memberRepository.findByUserId(userId)
                     .ifPresentOrElse(
