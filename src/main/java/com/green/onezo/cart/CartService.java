@@ -107,13 +107,13 @@ public class CartService {
             Store store = storeOptional.get();
             List<CartItem> cartItemlist = cartItemRepository.findByMemberId(member.getId());
 
-            if (cartItemlist.isEmpty()) {
+            if(cartItemlist.isEmpty()) {
                 CartItem cartItem = modelMapper.map(cartItemDetailDto, CartItem.class);
                 cartItem.setMember(member);
                 cartItem.setStore(store);
                 cartItem = cartItemRepository.save(cartItem);
                 return modelMapper.map(cartItem, CartItemDetailDto.class);
-            } else {
+            }else{
                 CartItem dbCart = cartItemlist.get(0);
                 dbCart.setStore(store);
                 dbCart = cartItemRepository.save(dbCart);
@@ -122,39 +122,23 @@ public class CartService {
         }
         return null;
     }
-
     @Transactional
-    public CartDetailDto update(CartDetailDto cartDetailDto) {
+    public CartDetailDto update(CartDetailDto cartDetailDto, Long memberId) {
         ModelMapper modelMapper = new ModelMapper();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-
-        Optional<Member> memberOptional = memberRepository.findByUserId(user.getUsername());
-        Optional<CartItem> cartItemOptional = cartItemRepository.findById(cartDetailDto.getCartItemId());
-        if (memberOptional.isPresent() && cartItemOptional.isPresent()) {
-            CartItem cartItem = cartItemOptional.get();
-            // 장바구니 있는 경우
-            List<CartItem> cartItemList = cartItemRepository.findByMemberId(memberOptional.get().getId());
-            if (cartItemList.isEmpty()) {
-                throw new RuntimeException("로그인한 유저가 없습니다.");
-            } else {
-//            Long cartDetail = cartItemList.getId();
-                CartDetail cartDetail = modelMapper.map(cartDetailDto, CartDetail.class);
-                cartDetail.setQuantity(cartDetailDto.getQuentity());
-                cartDetail.setCartItem(cartItem);
-                Menu menu = menuRepository.findById(cartDetailDto.getMenuId()).orElseThrow(() -> new EntityNotFoundException("메뉴를 선택해주세요"));
-                cartDetail.setMenu(menu);
-
-                cartDetail = cartDetailRepository.save(cartDetail);
-
-                return modelMapper.map(cartDetail, CartDetailDto.class);
-
-            }
-
+        Optional<CartItem> cartItemOptional = cartItemRepository.findCartItemByMemberId(memberId);
+        if (cartItemOptional.isPresent()) {
+            CartDetail cartDetail = new CartDetail();
+            cartDetail.setCartItem(cartItemOptional.get());
+            cartDetail.setQuantity(cartDetailDto.getQuentity());
+            Menu menu = menuRepository.findById(cartDetailDto.getMenuId()).orElseThrow(() -> new EntityNotFoundException("메뉴를 선택해주세요"));
+            cartDetail.setMenu(menu);
+            cartDetail = cartDetailRepository.save(cartDetail);
+            return modelMapper.map(cartDetail, CartDetailDto.class);
         }
 
-        return cartDetailDto;
+        return null;
     }
+
 
 
 }

@@ -1,5 +1,7 @@
 package com.green.onezo.cart;
 
+import com.green.onezo.member.Member;
+import com.green.onezo.member.MemberRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,9 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/cart")
@@ -19,6 +24,7 @@ import java.util.List;
 @Tag(name = "cart-controller", description = "장바구니")
 public class CartController {
     private final CartService cartService;
+    private final MemberRepository memberRepository;
 
     @PostMapping("/add")
     @Operation(summary = "장바구니 아이템 추가", description = "요청 데이터: 멤버 PK, 스토어 PK, 메뉴 PK, 수량")
@@ -87,8 +93,12 @@ public class CartController {
 
     @Operation(summary = "로그인한 유저가 장바구니 업데이트")
     @PostMapping("/update")
-    public ResponseEntity<String> update(@RequestBody CartDetailDto cartDetailDto){
-        CartDetailDto result = cartService.update(cartDetailDto);
+    public ResponseEntity<String> update(@RequestBody CartDetailDto cartDetailDto, Principal principal){
+        String userId = principal.getName();
+        Optional<Member> member = memberRepository.findByUserId(userId);
+        Long memberId = member.get().getId();
+
+        CartDetailDto result = cartService.update(cartDetailDto, memberId);
         if (result == null) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body("장바구니 아이템을 찾을 수 없습니다.");
         }

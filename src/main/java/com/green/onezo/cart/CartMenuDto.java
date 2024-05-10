@@ -1,26 +1,20 @@
 package com.green.onezo.cart;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.green.onezo.menu.Menu;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class CartDetailDto {
+public class CartMenuDto {
 
     @JsonIgnore
-    private Long cartDetailId;
+    private Long cartItemId;
 
     private Long menuId;
 
-    private int quentity;
-
-    @JsonIgnore
-    private Long cartId;
-
-
+    private int quantity;
 }
