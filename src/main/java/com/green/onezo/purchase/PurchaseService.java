@@ -1,11 +1,21 @@
 package com.green.onezo.purchase;
 
+import com.green.onezo.cart.CartItem;
+import com.green.onezo.cart.CartItemRepository;
+import com.green.onezo.member.Member;
+import com.green.onezo.member.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springdoc.core.configuration.SpringDocUIConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -13,6 +23,8 @@ import java.util.Optional;
 public class PurchaseService {
     private final PurchaseRepository purchaseRepository;
     private final PurchaseDetailRepository purchaseDetailRepository;
+    private final MemberRepository memberRepository;
+    private final CartItemRepository cartItemRepository;
 
 
     //    @Transactional
@@ -20,14 +32,23 @@ public class PurchaseService {
 //        return purchaseRepository.findById(id);
 //    }
     @Transactional
-    public PurchaseDto getPurchase(Long purchaseId) {
+    public PurchaseDto getPurchase(PurchaseDto purchaseDto, Long purchaseId) {
         ModelMapper modelMapper = new ModelMapper();
-        Optional<Purchase> get = purchaseRepository.findById(purchaseId);
-        if (get.isPresent()) {
-            Purchase purchase = get.get();
-            return modelMapper.map(purchase, PurchaseDto.class);
-        } else
-            return new PurchaseDto();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        Optional<Member> memberOptional = memberRepository.findByUserId(user.getUsername());
+        if (memberOptional.isPresent()) {
+            Member member = memberOptional.get();
+            List<Purchase> purchaselist = purchaseRepository.findByMemberId(member.getId());
+            if (purchaselist.isEmpty()) {
+                CartItem cartItem = cartItemRepository
+                Purchase purchase = modelMapper.map(purchaseDto, Purchase.class);
+                purchase.setPurchaseId(purchaseDto.getId());
+                purchase.setMember(member);
+                return modelMapper.map(purchase, PurchaseDto.class);
+            }
+        }
+        return null;
     }
 
     @Transactional
