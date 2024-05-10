@@ -33,8 +33,6 @@ class CartControllerTest {
         CartItem cartItem = CartItem.builder()
                 .member(member)
                 .store(store)
-                .menu(menu)
-                .quantity(1)
                 .build();
 
         CartItem savedItem = cartItemRepository.save(cartItem);
@@ -44,9 +42,7 @@ class CartControllerTest {
                 () -> assertNotNull(savedItem),
                 () -> assertNotNull(savedItem.getId()),
                 () -> assertEquals(1L, savedItem.getMember().getId()),
-                () -> assertEquals(1L, savedItem.getStore().getId()),
-                () -> assertEquals(1L, savedItem.getMenu().getId()),
-                () -> assertEquals(1, savedItem.getQuantity())
+                () -> assertEquals(1L, savedItem.getStore().getId())
         );
 
     }
@@ -58,8 +54,6 @@ class CartControllerTest {
         list.forEach(cartItem -> {
             System.out.println(cartItem.getId());
             System.out.println(cartItem.getStore());
-            System.out.println(cartItem.getMenu());
-            System.out.println(cartItem.getQuantity());
         });
     }
 }
