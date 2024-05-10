@@ -1,6 +1,8 @@
 package com.green.onezo.purchase;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.green.onezo.enum_column.TakeInOut;
 import com.green.onezo.member.Member;
 import com.green.onezo.pay.Pay;
 import jakarta.persistence.Column;
@@ -21,14 +23,16 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PurchaseDto {
+    @JsonIgnore
     private Long id;
 
-    private Long memberId;
-    @NotBlank(message = "로그인한 유저의 이름")
-    private String memberName;
-    @NotBlank(message = "로그인한 유저의 이메일")
-    private String memberUserId;
     @NotBlank
     private LocalDateTime payDate;
+
+    private int totalPrice;
+
+    private String storeName;
+
+    private TakeInOut takeInOut;
 
 }
