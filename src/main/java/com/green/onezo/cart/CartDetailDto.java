@@ -19,7 +19,8 @@ public class CartDetailDto {
 
     private int quentity;
 
-    private Long cartId;
+    @JsonIgnore
+    private Long cartItemId;
 
 
 }
