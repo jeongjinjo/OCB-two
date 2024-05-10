@@ -26,10 +26,9 @@ public class PurchaseController {
     @Operation(summary = "주문 조회",
             description = "주문 조회"
     )
-    @GetMapping("/record/{purchaseId}")
-
-    public ResponseEntity<PurchaseDto> getRecord(@PathVariable Long purchaseId){
-        PurchaseDto result = purchaseService.getPurchase(purchaseId);
+    @GetMapping("/record")
+    public ResponseEntity<List<PurchaseDto>> getRecord(){
+        List<PurchaseDto> result = purchaseService.getPurchase();
         if (result == null) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
         }
@@ -42,7 +41,6 @@ public class PurchaseController {
     public ResponseEntity<PurchaseDetailDto> getDetail(Long id) {
         PurchaseDetailDto result = purchaseService.getDetail(id);
         if (result == null) {
-
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
         }
         return ResponseEntity.status(HttpStatus.OK).body(result);
