@@ -1,6 +1,7 @@
 package com.green.onezo.store;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.green.onezo.cart.CartItemRepository;
 import com.green.onezo.enum_column.TakeInOut;
 import com.green.onezo.member.Member;
 import jakarta.persistence.EntityNotFoundException;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 public class StoreService {
     private final StoreRepository storeRepository;
     private final ObjectMapper objectMapper;
+    private final CartItemRepository cartItemRepository;
 
 
     // 매장상세 조회
@@ -63,4 +65,11 @@ public class StoreService {
 
     }
 
+    public boolean getMemberCart(Long userId) {
+        if(cartItemRepository.findById(userId) != null){
+            return false;
+        }else{
+            return true;
+        }
+    }
 }
