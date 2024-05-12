@@ -37,52 +37,6 @@ public class CartService {
     @PersistenceContext
     private EntityManager entityManager;
 
-//    // 장바구니 아이템 추가
-//    public CartItem addCartItem(CartItemDto.CartItemReq cartItemReq) {
-//
-//        Member member = memberRepository.findById(cartItemReq.getMemberId())
-//                .orElseThrow(() -> new IllegalArgumentException("멤버 아이디를 찾을 수 없습니다."));
-//        Store store = storeRepository.findById(cartItemReq.getStoreId())
-//                .orElseThrow(() -> new IllegalArgumentException("스토어 아이디를 찾을 수 없습니다."));
-//        Menu menu = menuRepository.findById(cartItemReq.getMenuId())
-//                .orElseThrow(() -> new IllegalArgumentException("메뉴 아이디를 찾을 수 없습니다."));
-////        Menu menu = menuRepository.findByMenuImage(cartItemReq.getMenuImage())
-////                .orElseThrow(() -> new IllegalArgumentException("메뉴 이미지를 찾을 수 없습니다."));
-//
-//        if (menu.getStock().equals("Out of stock")) {
-//            throw new RuntimeException("재고가 부족합니다.");
-//        }
-//
-////        Optional<CartItem> existingCartItem = cartItemRepository.findByMemberAndStoreAndMenu(member, store, menu);
-////        if (existingCartItem.isPresent()) {
-////            CartItem cartItem = existingCartItem.get();
-////            return cartItemRepository.save(cartItem);
-////        } else {
-////            // 새로운 아이템 생성
-////            CartItem cartItem = CartItem.builder()
-////                    .member(member)
-////                    .store(store)
-////                    .build();
-////            return cartItemRepository.save(cartItem);
-////        }
-//        return null;
-//    }
-
-//    // 장바구니 아이템 업데이트
-//    @Transactional
-//    public void updateCartItem(Long cartItemId, int quantity) {
-//        CartItem cartItem = cartItemRepository.findById(cartItemId)
-//                .orElseThrow(() -> new IllegalArgumentException("해당하는 장바구니 아이템을 찾을 수 없습니다."));
-//        cartItemRepository.save(cartItem);
-//    }
-
-//    // 장바구니 아이템 삭제
-//    @Transactional
-//    public void deleteCartItem(Long cartItemId) {
-//        cartItemRepository.deleteById(cartItemId);
-//    }
-
-
     @Transactional
     public CartItemDetailDto insert(CartItemDetailDto cartItemDetailDto) {
         ModelMapper modelMapper = new ModelMapper();
@@ -129,41 +83,9 @@ public class CartService {
         return null;
     }
 
-//    // 장바구니 조회
-//    public List<CartItemDto.CartItemRes> getCart(Long memberId) {
-//
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        User user = (User) authentication.getPrincipal();
-//
-//        Optional<Member> memberOptional = memberRepository.findByUserId(user.getUsername());
-//        if (!memberOptional.isPresent()) {
-//            throw new EntityNotFoundException("해당하는 사용자를 찾을 수 없습니다.");
-//        }
-//        Member member = memberOptional.get();
-//
-//        List<CartItem> cartItems = cartItemRepository.findByMemberId(member.getId());
-//        List<CartItemDto.CartItemRes> cartItemResponses = new ArrayList<>();
-//
-//        for (CartItem item : cartItems) {
-//            for (CartDetail detail : item.getCartDetails()) {
-//                CartItemDto.CartItemRes cartItemRes = CartItemDto.CartItemRes.builder()
-//                        .cartItemId(item.getId())
-//                        .storeId(item.getStore().getId())
-//                        .menuId(detail.getMenu().getId())
-//                        .storeName(item.getStore().getStoreName())
-//                        .menuName(detail.getMenu().getMenuName())
-//                        .quantity(detail.getQuantity())
-//                        .price(detail.getMenu().getPrice())
-//                        .address(item.getStore().getAddress())
-//                        .takeInOut(item.getTakeInOut())
-//                        .build();
-//                cartItemResponses.add(cartItemRes);
-//            }
-//        }
-//        return cartItemResponses;
-//    }
 
     // 장바구니 조회
+    @Transactional
     public List<CartItemDto.CartRes> getCart(Long memberId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -191,7 +113,8 @@ public class CartService {
         return cartItemResponses;
     }
 
-    // 장바구니 조회
+    // 장바구니 상세 조회
+    @Transactional
     public List<CartItemDto.CartDetailRes> getCartDetail(Long memberId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -218,6 +141,17 @@ public class CartService {
         }
         return cartItemResponses;
     }
+
+    // 장바구니 전체 삭제
+    public void deleteCart(Long cartItemId) {
+        cartItemRepository.deleteById(cartItemId);
+    }
+
+    // 장바구니 아이템 개별 삭제
+    public void deleteCartItem(Long cartDetailId) {
+        cartDetailRepository.deleteById(cartDetailId);
+    }
+
 }
 
 
