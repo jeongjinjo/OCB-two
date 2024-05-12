@@ -27,55 +27,6 @@ public class CartController {
     private final CartService cartService;
     private final MemberRepository memberRepository;
 
-//    @PostMapping("/add")
-//    @Operation(summary = "장바구니 아이템 추가", description = "요청 데이터: 멤버 PK, 스토어 PK, 메뉴 PK, 수량")
-//    public ResponseEntity<String> addCartItem(@RequestBody @Valid CartItemDto.CartItemReq cartItemReq) {
-//        //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        try {
-//            CartItem cartItem = cartService.addCartItem(cartItemReq);
-//            return ResponseEntity.ok("장바구니에 추가되었습니다.");
-//        } catch (IllegalArgumentException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("장바구니 추가 실패: " + e.getMessage());
-//        }
-//    }
-
-//    @GetMapping("/{memberId}")
-//    @Operation(summary = "회원 장바구니 조회", description = "특정 회원의 장바구니 아이템을 조회합니다.")
-//    public ResponseEntity<List<CartItemDto.CartItemRes>> getCartItem(@Parameter(description = "멤버 PK", required = true) @PathVariable Long memberId) {
-//        List<CartItemDto.CartItemRes> cartItems = cartService.getCart(memberId);
-//        return ResponseEntity.ok(cartItems);
-//    }
-
-//    @PutMapping("/update/{cartItemId}/{quantity}")
-//    @Operation(summary = "장바구니 아이템 수량 업데이트", description = "장바구니 아이템의 수량을 업데이트합니다.")
-//    public ResponseEntity<String> updateCartItem(@Parameter(description = "카트 아이템 PK", required = true) @PathVariable Long cartItemId, @Parameter(description = "수량", required = true) @PathVariable int quantity) {
-//        try {
-//            cartService.updateCartItem(cartItemId, quantity);
-//            return ResponseEntity.ok("장바구니 아이템 수량이 업데이트되었습니다.");
-//        } catch (IllegalArgumentException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("장바구니 아이템을 찾을 수 없습니다.");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러: " + e.getMessage());
-//        }
-//    }
-//
-//    @DeleteMapping("/delete/{cartItemId}")
-//    @Operation(summary = "장바구니 아이템 삭제", description = "장바구니 아이템을 삭제합니다.")
-//    public ResponseEntity<String> deleteCartItem(@Parameter(description = "카트 아이템 PK", required = true) @PathVariable Long cartItemId) {
-//        try {
-//            cartService.deleteCartItem(cartItemId);
-//            return ResponseEntity.ok("장바구니 아이템을 삭제했습니다.");
-//        } catch (IllegalArgumentException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("장바구니 아이템을 찾을 수 없습니다.");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러: " + e.getMessage());
-//        }
-//    }
-
 
     @Operation(summary = "로그인한 유저가 장바구니 담기")
     @PostMapping("/insert")
@@ -108,23 +59,8 @@ public class CartController {
 
     }
 
-//    @GetMapping("/{memberId}")
-//    @Operation(summary = "회원 장바구니 조회", description = "로그인한 회원의 장바구니 아이템을 조회합니다.")
-//    public ResponseEntity<List<CartItemDetailDto>> getCart(@Parameter(description = "멤버 PK", required = true) @PathVariable Long memberId,
-//                                                           Authentication authentication) {
-//        User user =  (User)authentication.getPrincipal();
-//        if (user == null) {
-//            ResponseEntity.status(HttpStatus.NOT_FOUND).body("JWT 로그인이 필요합니다.");
-//        }
-//
-//        try {
-//            List<CartItemDetailDto> cartItems = cartService.getCart(memberId);
-//            return ResponseEntity.ok(cartItems);
-//        } catch (EntityNotFoundException e) {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
 
+    // 장바구니 조회
     @GetMapping("/{memberId}")
     @Operation(summary = "회원 장바구니 조회", description = "로그인한 유저가 선택한 지점명과 주소, 포장여부를 조회합니다.")
     public ResponseEntity<List<CartItemDto.CartRes>> getCart(@Parameter(description = "멤버 PK", required = true) @PathVariable Long memberId,
@@ -138,6 +74,7 @@ public class CartController {
         return ResponseEntity.ok(cartItems);
     }
 
+    // 장바구니 상세 조회
     @GetMapping("/detail/{memberId}")
     @Operation(summary = "회원 장바구니 상세 조회", description = "장바구니 속 메뉴명, 수량, 가격을 조회합니다.")
     public ResponseEntity<List<CartItemDto.CartDetailRes>> getCartDetail(@Parameter(description = "멤버 PK", required = true) @PathVariable Long memberId,
@@ -150,7 +87,34 @@ public class CartController {
         List<CartItemDto.CartDetailRes> cartItems = cartService.getCartDetail(memberId);
         return ResponseEntity.ok(cartItems);
     }
-    
+
+    @DeleteMapping("/reset/{cartItemId}")
+    @Operation(summary = "장바구니 초기화", description = "장바구니를 삭제합니다.")
+    public ResponseEntity<String> deleteCart(@Parameter(description = "카트 아이템 pk", required = true)
+                                             @PathVariable Long cartItemId) {
+        try {
+            cartService.deleteCart(cartItemId);
+            return ResponseEntity.ok("장바구니를 초기화 했습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("장바구니를 찾을 수 없습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/delete/{cartDetailId}")
+    @Operation(summary = "장바구니 아이템 삭제", description = "장바구니 아이템을 삭제합니다.")
+    public ResponseEntity<String> deleteCartItem(@Parameter(description = "카트 디테일 pk", required = true)
+                                                 @PathVariable Long cartDetailId) {
+        try {
+            cartService.deleteCartItem(cartDetailId);
+            return ResponseEntity.ok("장바구니 아이템을 삭제했습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("장바구니 아이템을 찾을 수 없습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러: " + e.getMessage());
+        }
+    }
 
 
 }
