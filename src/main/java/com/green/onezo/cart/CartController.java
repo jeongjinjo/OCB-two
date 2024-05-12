@@ -92,7 +92,7 @@ public class CartController {
         return ResponseEntity.status(HttpStatus.OK).body("장바구니에 입력되었습니다.");
     }
 
-    @Operation(summary = "로그인한 유저가 장바구니 업데이트")
+    @Operation(summary = "로그인한 유저가 장바구니 상세 단건조회")
     @PostMapping("/update")
     public ResponseEntity<String> update(@RequestBody CartDetailDto cartDetailDto, Principal principal){
         String userId = principal.getName();
@@ -108,22 +108,6 @@ public class CartController {
 
     }
 
-//    @GetMapping("/{memberId}")
-//    @Operation(summary = "회원 장바구니 조회", description = "로그인한 회원의 장바구니 아이템을 조회합니다.")
-//    public ResponseEntity<List<CartItemDetailDto>> getCart(@Parameter(description = "멤버 PK", required = true) @PathVariable Long memberId,
-//                                                           Authentication authentication) {
-//        User user =  (User)authentication.getPrincipal();
-//        if (user == null) {
-//            ResponseEntity.status(HttpStatus.NOT_FOUND).body("JWT 로그인이 필요합니다.");
-//        }
-//
-//        try {
-//            List<CartItemDetailDto> cartItems = cartService.getCart(memberId);
-//            return ResponseEntity.ok(cartItems);
-//        } catch (EntityNotFoundException e) {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
 
     @GetMapping("/{memberId}")
     @Operation(summary = "회원 장바구니 조회", description = "로그인한 유저가 선택한 지점명과 주소, 포장여부를 조회합니다.")
