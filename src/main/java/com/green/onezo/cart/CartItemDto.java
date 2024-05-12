@@ -57,6 +57,8 @@ public class CartItemDto {
     @AllArgsConstructor
     public static class CartDetailRes {
 
+        private Long cartDetailId;
+        
         private String menuName;
 
         private int quantity;

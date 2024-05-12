@@ -3,6 +3,9 @@ package com.green.onezo.member;
 import com.green.onezo.enum_column.ResignYn;
 import com.green.onezo.global.error.BizException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -83,6 +86,9 @@ public class MemberService {
     // 회원정보수정
     @Transactional
     public void memberUpdate(Long memberId, MemberUpdateDto.UpdateReq updateDtoReq) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+
         Member member = memberRepository.findById(memberId)
                 .filter(m -> m.getResignYn().equals(ResignYn.N))
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 회원아이디를 찾을 수 없거나 탈퇴한 회원입니다."));
