@@ -28,29 +28,31 @@ public class CartController {
     private final MemberRepository memberRepository;
 
 
-    @Operation(summary = "로그인한 유저가 장바구니 담기")
-    @PostMapping("/insert")
-    public ResponseEntity<String> insert(@RequestBody @Valid CartItemDetailDto cartItemDetailDto,
+    @Operation(summary = "회원 장바구니 생성 API",
+    description = "로그인한 유저가 매장/포장 여부 선택 시, 장바구니 테이블에 멤버 pk, 매장 id, 포장여부가 insert 된다.")
+    @PostMapping("")
+    public ResponseEntity<String> createCart(@RequestBody @Valid CartItemDetailDto cartItemDetailDto,
                                          Authentication authentication){
         User user =  (User)authentication.getPrincipal();
         if (user == null) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body("JWT 로그인이 필요합니다.");
         }
-        CartItemDetailDto result = cartService.insert(cartItemDetailDto);
+        CartItemDetailDto result = cartService.createCart(cartItemDetailDto);
         if (result == null) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body("매장을 선택해 주세요");
         }
         return ResponseEntity.status(HttpStatus.OK).body("장바구니에 입력되었습니다.");
     }
 
-    @Operation(summary = "로그인한 유저가 장바구니 상세 단건조회")
-    @PostMapping("/update")
-    public ResponseEntity<String> update(@RequestBody CartDetailDto cartDetailDto, Principal principal){
+    @Operation(summary = "장바구니 담기 API",
+            description = "메뉴를 담을 때, 장바구니 상세 테이블에 메뉴 id와 수량이 저장된다.")
+    @PostMapping("/add")
+    public ResponseEntity<String> addCart(@RequestBody CartDetailDto cartDetailDto, Principal principal){
         String userId = principal.getName();
         Optional<Member> member = memberRepository.findByUserId(userId);
         Long memberId = member.get().getId();
 
-        CartDetailDto result = cartService.update(cartDetailDto, memberId);
+        CartDetailDto result = cartService.addCart(cartDetailDto, memberId);
         if (result == null) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body("장바구니 아이템을 찾을 수 없습니다.");
         }
@@ -63,8 +65,8 @@ public class CartController {
     // 장바구니 조회
     @GetMapping("/{memberId}")
     @Operation(summary = "회원 장바구니 조회", description = "로그인한 유저가 선택한 지점명과 주소, 포장여부를 조회합니다.")
-    public ResponseEntity<List<CartItemDto.CartRes>> getCart(@Parameter(description = "멤버 PK", required = true) @PathVariable Long memberId,
-                                                                     Authentication authentication) {
+    public ResponseEntity<List<CartItemDto.CartRes>> getCart(@Parameter(description = "멤버 PK", required = true)
+                                                                 @PathVariable Long memberId, Authentication authentication) {
         User user =  (User)authentication.getPrincipal();
         if (user == null) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body("JWT 로그인이 필요합니다.");
@@ -74,16 +76,17 @@ public class CartController {
         return ResponseEntity.ok(cartItems);
     }
 
-    // 장바구니 상세 조회
-    @GetMapping("/detail/{memberId}")
-    @Operation(summary = "회원 장바구니 상세 조회", description = "장바구니 속 메뉴명, 수량, 가격을 조회합니다.")
-    public ResponseEntity<List<CartItemDto.CartDetailRes>> getCartDetail(@Parameter(description = "멤버 PK", required = true) @PathVariable Long memberId,
-                                                                     Authentication authentication) {
+    // 장바구니 아이템 조회
+    @GetMapping("/item/{memberId}")
+    @Operation(summary = "장바구니 아이템 조회 API",
+            description = "회원의 장바구니에 담긴 각 아이템의 메뉴명, 수량, 가격, 메뉴 이미지를 얻어옵니다.")
+    public ResponseEntity<List<CartItemDto.CartDetailRes>> getCartDetail(
+            @Parameter(description = "멤버 pk", required = true)
+            @PathVariable Long memberId, Authentication authentication) {
         User user =  (User)authentication.getPrincipal();
         if (user == null) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body("JWT 로그인이 필요합니다.");
         }
-
         List<CartItemDto.CartDetailRes> cartItems = cartService.getCartDetail(memberId);
         return ResponseEntity.ok(cartItems);
     }

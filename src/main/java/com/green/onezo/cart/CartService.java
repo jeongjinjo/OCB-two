@@ -38,7 +38,7 @@ public class CartService {
     private EntityManager entityManager;
 
     @Transactional
-    public CartItemDetailDto insert(CartItemDetailDto cartItemDetailDto) {
+    public CartItemDetailDto createCart(CartItemDetailDto cartItemDetailDto) {
         ModelMapper modelMapper = new ModelMapper();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
@@ -67,7 +67,7 @@ public class CartService {
     }
 
     @Transactional
-    public CartDetailDto update(CartDetailDto cartDetailDto, Long memberId) {
+    public CartDetailDto addCart(CartDetailDto cartDetailDto, Long memberId) {
         ModelMapper modelMapper = new ModelMapper();
         Optional<CartItem> cartItemOptional = cartItemRepository.findCartItemByMemberId(memberId);
         if (cartItemOptional.isPresent()) {
@@ -132,6 +132,7 @@ public class CartService {
         for (CartItem item : cartItems) {
             for (CartDetail detail : item.getCartDetails()) {
                 CartItemDto.CartDetailRes cartDetailRes = CartItemDto.CartDetailRes.builder()
+                        .cartDetailId(detail.getId())
                         .menuName(detail.getMenu().getMenuName())
                         .quantity(detail.getQuantity())
                         .price(detail.getMenu().getPrice())
