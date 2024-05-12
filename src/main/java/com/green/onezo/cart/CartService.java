@@ -212,6 +212,7 @@ public class CartService {
                         .menuName(detail.getMenu().getMenuName())
                         .quantity(detail.getQuantity())
                         .price(detail.getMenu().getPrice())
+                        .menuImage(detail.getMenu().getMenuImage())
                         .build();
                 cartItemResponses.add(cartDetailRes);
             }

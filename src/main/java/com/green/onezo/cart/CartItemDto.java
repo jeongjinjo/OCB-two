@@ -63,6 +63,8 @@ public class CartItemDto {
 
         private int price;
 
+        private String menuImage;
+
     }
 
 }

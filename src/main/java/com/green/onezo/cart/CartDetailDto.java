@@ -1,10 +1,7 @@
 package com.green.onezo.cart;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @NoArgsConstructor
@@ -21,6 +18,7 @@ public class CartDetailDto {
 
     @JsonIgnore
     private Long cartId;
+
 
 
 }
