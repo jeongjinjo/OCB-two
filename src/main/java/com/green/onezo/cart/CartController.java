@@ -43,7 +43,7 @@ public class CartController {
         return ResponseEntity.status(HttpStatus.OK).body("장바구니에 입력되었습니다.");
     }
 
-    @Operation(summary = "로그인한 유저가 장바구니 업데이트")
+    @Operation(summary = "로그인한 유저가 장바구니 상세 단건조회")
     @PostMapping("/update")
     public ResponseEntity<String> update(@RequestBody CartDetailDto cartDetailDto, Principal principal){
         String userId = principal.getName();
