@@ -20,10 +20,7 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 
 //    Optional<CartItem> findByMemberAndStoreAndMenu(Member member, Store store, Menu menu);
     Optional<CartItem> findById(Long id);
-
-
     Optional<CartItem> findByMemberIdAndStoreId(Long memberId, Long storeId);
-
     @Query("SELECT c FROM CartItem c WHERE c.member.id = :memberId")
     Optional<CartItem> findCartItemByMemberId(Long memberId);
 
