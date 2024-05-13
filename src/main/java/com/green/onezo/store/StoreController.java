@@ -75,7 +75,6 @@ public class StoreController {
         String userId = principal.getName();
         Optional<Member> member = memberRepository.findByUserId(userId);
         Long memberId = member.get().getId();
-        System.err.println(storeService.getMemberCart(memberId));
         if(storeService.getMemberCart(memberId) == false) {
             return false;
         }else{
