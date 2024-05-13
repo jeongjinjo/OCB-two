@@ -77,7 +77,7 @@ public class CartController {
     }
 
     // 장바구니 아이템 조회
-    @GetMapping("/item/{memberId}")
+    @GetMapping("/detail/{memberId}")
     @Operation(summary = "장바구니 아이템 조회 API",
             description = "회원의 장바구니에 담긴 각 아이템의 메뉴명, 수량, 가격, 메뉴 이미지를 얻어옵니다.")
     public ResponseEntity<List<CartItemDto.CartDetailRes>> getCartDetail(
