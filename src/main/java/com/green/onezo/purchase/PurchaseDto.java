@@ -25,7 +25,6 @@ import java.util.List;
 public class PurchaseDto {
     @JsonIgnore
     private Long id;
-
     @NotBlank
     private LocalDateTime payDate;
 
