@@ -97,9 +97,8 @@ public class CartService {
         }
         Member member = memberOptional.get();
 
-        List<CartItem> cartItems = cartItemRepository.findByMemberId(member.getId());
+        List<CartItem> cartItems = cartItemRepository.findByMemberId(memberId);
         List<CartItemDto.CartRes> cartItemResponses = new ArrayList<>();
-
         for (CartItem item : cartItems) {
             for (CartDetail detail : item.getCartDetails()) {
                 CartItemDto.CartRes cartItemRes = CartItemDto.CartRes.builder()
