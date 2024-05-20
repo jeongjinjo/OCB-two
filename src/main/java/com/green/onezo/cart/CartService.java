@@ -98,30 +98,30 @@ public class CartService {
         }
     }
 
-//    // 장바구니 상세 조회
-//    @Transactional
-//    public List<CartDto.CartDetailRes> getCartDetail(Long memberId) {
-//
-//        ModelMapper modelMapper = new ModelMapper();
-//        List<CartDetail> cartDetails = cartRepository.findCartByMemberId(memberId);
-//
-//        if (cartDetails.isEmpty()) {
-//            throw new EntityNotFoundException("Cart details not found for memberId: " + memberId);
-//        }
-//
-//        return cartDetails.stream()
-//                .map(cartDetail -> {
-//                    Menu menu = cartDetail.getMenu();
-//                    return new CartDto.CartDetailRes(
-//                            cartDetail.getId(),
-//                            menu.getMenuName(),
-//                            cartDetail.getQuantity(),
-//                            menu.getPrice(),
-//                            menu.getMenuImage()
-//                    );
-//                })
-//                .toList();
-//    }
+    // 장바구니 상세 조회
+    @Transactional
+    public List<CartDto.CartDetailRes> getCartDetail(Long memberId) {
+
+        ModelMapper modelMapper = new ModelMapper();
+        List<CartDetail> cartDetails = cartDetailRepository.findByMemberId(memberId);
+
+        if (cartDetails.isEmpty()) {
+            throw new EntityNotFoundException("Cart details not found for memberId: " + memberId);
+        }
+
+        return cartDetails.stream()
+                .map(cartDetail -> {
+                    Menu menu = cartDetail.getMenu();
+                    return new CartDto.CartDetailRes(
+                            cartDetail.getId(),
+                            menu.getMenuName(),
+                            cartDetail.getQuantity(),
+                            menu.getPrice(),
+                            menu.getMenuImage()
+                    );
+                })
+                .toList();
+    }
 
 //    // 장바구니 전체 삭제
 //    public void deleteCart(Long cartItemId) {

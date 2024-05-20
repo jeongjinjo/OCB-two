@@ -14,6 +14,6 @@ public interface CartDetailRepository extends JpaRepository<CartDetail, Long> {
 
     Optional<CartDetail> findById(Long id);
 
-    @Query("SELECT c FROM Cart c WHERE c.member.id = :memberId")
-    Optional<Cart> findByCartId(Long memberId);
+    @Query("SELECT cd FROM CartDetail cd WHERE cd.cart.member.id = :memberId")
+    List<CartDetail> findByMemberId(Long memberId);
 }

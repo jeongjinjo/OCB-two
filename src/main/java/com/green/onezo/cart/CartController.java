@@ -75,22 +75,21 @@ public class CartController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-//    // 장바구니 상세 조회
-//    @GetMapping("/get/detail")
-//    @Operation(summary = "장바구니 상세 조회 API",
-//            description = "유저의 장바구니에 담긴 각 아이템의 메뉴명, 수량, 가격, 메뉴 이미지를 얻어옵니다.")
-//    public ResponseEntity<List<CartDto.CartDetailRes>> getCartDetail(Principal principal) {
-//        String userId = principal.getName();
-//        Optional<Member> member = memberRepository.findByUserId(userId);
-//        Long memberId = member.get().getId();
-//
-//        //CartDto.CartRes result = cartService.getCart(memberId);
-//        List<CartDto.CartDetailRes> result = cartService.getCartDetail(memberId);
-//        if (result == null) {
-//            ResponseEntity.status(HttpStatus.NOT_FOUND).body("장바구니를 찾을 수 없습니다.");
-//        }
-//        return ResponseEntity.status(HttpStatus.OK).body(result);
-//    }
+    // 장바구니 상세 조회
+    @GetMapping("/get/detail")
+    @Operation(summary = "장바구니 상세 조회 API",
+            description = "유저의 장바구니에 담긴 각 아이템의 메뉴명, 수량, 가격, 메뉴 이미지를 얻어옵니다.")
+    public ResponseEntity<List<CartDto.CartDetailRes>> getCartDetail(Principal principal) {
+        String userId = principal.getName();
+        Optional<Member> member = memberRepository.findByUserId(userId);
+        Long memberId = member.get().getId();
+
+        List<CartDto.CartDetailRes> result = cartService.getCartDetail(memberId);
+        if (result == null) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body("장바구니를 찾을 수 없습니다.");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
 
 //    @DeleteMapping("/reset/{cartItemId}")
 //    @Operation(summary = "장바구니 초기화", description = "장바구니를 삭제합니다.")
