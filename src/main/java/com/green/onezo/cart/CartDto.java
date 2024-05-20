@@ -45,6 +45,8 @@ public class CartDto {
     @AllArgsConstructor
     public static class CartRes {
 
+        private Long cartId;
+
         private String storeName;
 
         private String address;

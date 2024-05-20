@@ -3,7 +3,6 @@ package com.green.onezo.cart;
 import com.green.onezo.member.Member;
 import com.green.onezo.member.MemberRepository;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -91,6 +90,32 @@ public class CartController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
+//    // 장바구니 삭제
+//    @DeleteMapping("/delete")
+//    @Operation(summary = "장바구니 삭제 API", description = "장바구니를 삭제합니다.")
+//    public ResponseEntity<Void> deleteCart(Principal principal) {
+//        String userId = principal.getName();
+//        Optional<Member> member = memberRepository.findByUserId(userId);
+//        Long memberId = member.get().getId();
+//
+//        cartService.deleteCart(memberId);
+//        return ResponseEntity.noContent().build();
+//    }
+//
+//    // 장바구니 상세 삭제
+//    @DeleteMapping("/detail/delete")
+//    @Operation(summary = "장바구니 상세 삭제 API", description = "장바구니 상세를 삭제합니다.")
+//    public ResponseEntity<Void> deleteCartDetail(@Parameter(description = "장바구니 상세 ID", required = true) @PathVariable Long cartDetailId,
+//                                                 Principal principal) {
+//        String userId = principal.getName();
+//        Optional<Member> member = memberRepository.findByUserId(userId);
+//        Long memberId = member.get().getId();
+//
+//        cartService.deleteCartDetail(cartDetailId, memberId);
+//        return ResponseEntity.noContent().build();
+//    }
+
+
 //    @DeleteMapping("/reset/{cartItemId}")
 //    @Operation(summary = "장바구니 초기화", description = "장바구니를 삭제합니다.")
 //    public ResponseEntity<String> deleteCart(@Parameter(description = "카트 아이템 pk", required = true)
@@ -104,6 +129,7 @@ public class CartController {
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러: " + e.getMessage());
 //        }
 //    }
+
 //
 //    @DeleteMapping("/delete/{cartDetailId}")
 //    @Operation(summary = "장바구니 아이템 삭제", description = "장바구니 아이템을 삭제합니다.")
@@ -118,6 +144,7 @@ public class CartController {
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러: " + e.getMessage());
 //        }
 //    }
+//
 
 
 }

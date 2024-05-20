@@ -86,13 +86,12 @@ public class CartService {
     // 장바구니 조회
     @Transactional
     public CartDto.CartRes getCart(Long memberId) {
-        ModelMapper modelMapper = new ModelMapper();
         Optional<Cart> cartOpt = cartRepository.findCartByMemberId(memberId);
 
         if(cartOpt.isPresent()) {
             Cart cart = cartOpt.get();
             Store store = cart.getStore();
-            return new CartDto.CartRes(store.getStoreName(),store.getAddress(), cart.getTakeInOut());
+            return new CartDto.CartRes(cart.getId(), store.getStoreName(), store.getAddress(), cart.getTakeInOut());
         } else  {
             throw new EntityNotFoundException("장바구니를 찾을 수 없습니다.");
         }
@@ -102,7 +101,7 @@ public class CartService {
     @Transactional
     public List<CartDto.CartDetailRes> getCartDetail(Long memberId) {
 
-        ModelMapper modelMapper = new ModelMapper();
+        //ModelMapper modelMapper = new ModelMapper();
         List<CartDetail> cartDetails = cartDetailRepository.findByMemberId(memberId);
 
         if (cartDetails.isEmpty()) {
@@ -123,14 +122,36 @@ public class CartService {
                 .toList();
     }
 
-//    // 장바구니 전체 삭제
-//    public void deleteCart(Long cartItemId) {
-//        cartRepository.deleteById(cartItemId);
+//    // 장바구니 삭제
+//    public void deleteCart(Long memberId) {
+//        Optional<Cart> cartOptional = cartRepository.findCartByMemberId(memberId);
+//
+//        if (cartOptional.isPresent()) {
+//            Cart cart = cartOptional.get();
+//            cartDetailRepository.deleteAll(cart.getCartDetails()); // 관련 CartDetail 모두 삭제
+//            cartRepository.delete(cart);
+//        } else {
+//            throw new EntityNotFoundException("장바구니를 찾을 수 없습니다.");
+//        }
 //    }
 //
-//    // 장바구니 아이템 개별 삭제
-//    public void deleteCartItem(Long cartDetailId) {
-//        cartDetailRepository.deleteById(cartDetailId);
+//    // 장바구니 상세 삭제
+//    @Transactional
+//    public void deleteCartDetail(Long cartDetailId, Long memberId) {
+//        Optional<CartDetail> cartDetailOptional = cartDetailRepository.findById(cartDetailId);
+//
+//        if (cartDetailOptional.isPresent()) {
+//            CartDetail cartDetail = cartDetailOptional.get();
+//            Cart cart = cartDetail.getCart();
+//
+//            if (!cart.getMember().getId().equals(memberId)) {
+//                throw new EntityNotFoundException("장바구니를 찾을 수 없습니다.");
+//            }
+//
+//            cartDetailRepository.delete(cartDetail);
+//        } else {
+//            throw new EntityNotFoundException("장바구니를 찾을 수 없습니다.");
+//        }
 //    }
 
 }
