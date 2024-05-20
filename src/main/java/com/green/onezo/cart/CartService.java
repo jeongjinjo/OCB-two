@@ -94,7 +94,7 @@ public class CartService {
             Store store = cart.getStore();
             return new CartDto.CartRes(store.getStoreName(),store.getAddress(), cart.getTakeInOut());
         } else  {
-            throw new EntityNotFoundException("장바구니를 찾을 수 없습니다: " + memberId);
+            throw new EntityNotFoundException("장바구니를 찾을 수 없습니다.");
         }
     }
 
@@ -106,7 +106,7 @@ public class CartService {
         List<CartDetail> cartDetails = cartDetailRepository.findByMemberId(memberId);
 
         if (cartDetails.isEmpty()) {
-            throw new EntityNotFoundException("Cart details not found for memberId: " + memberId);
+            throw new EntityNotFoundException("장바구니를 찾을 수 없습니다.");
         }
 
         return cartDetails.stream()
