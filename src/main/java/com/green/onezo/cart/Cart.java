@@ -2,7 +2,6 @@ package com.green.onezo.cart;
 
 import com.green.onezo.enum_column.TakeInOut;
 import com.green.onezo.member.Member;
-import com.green.onezo.menu.Menu;
 import com.green.onezo.store.Store;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,10 +16,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CartItem {
+public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cart_item_id")
+    @Column(name = "cart_id")
     private Long id;
 
     @ManyToOne
@@ -34,9 +33,7 @@ public class CartItem {
     @Enumerated(EnumType.STRING)
     private TakeInOut takeInOut;
 
-    @OneToMany(mappedBy = "cartItem")
+    @OneToMany(mappedBy = "cart")
     private List<CartDetail> cartDetails;
-
-
 
 }

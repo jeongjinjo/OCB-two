@@ -24,9 +24,10 @@ public class CartDetail {
     private Menu menu;
 
     @ManyToOne
-    @JoinColumn(name = "cart_item_id")
-    private CartItem cartItem;
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
 
     @Column(nullable = false)
     private int quantity;
+
 }
