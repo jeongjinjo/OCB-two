@@ -20,7 +20,7 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping("/up")
-    public ResponseEntity<ReviewDto> getReview(@RequestBody @Valid ReviewDto reviewDto, Authentication authentication){
+    public ResponseEntity<ReviewDto> getReview(@RequestBody @Valid ReviewDto reviewDto, Authentication authentication) {
 
         User user = (User) authentication.getPrincipal();
 

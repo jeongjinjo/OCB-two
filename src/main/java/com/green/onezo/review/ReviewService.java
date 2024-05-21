@@ -38,24 +38,23 @@ public class ReviewService {
             Store store = storeOptional.get();
             List<Review> reviewList = reviewRepository.findByMemberId(member.getId());
             if (reviewList.isEmpty()) {
-                Review review = modelMapper.map(reviewDto,Review.class);
+                Review review = modelMapper.map(reviewDto, Review.class);
                 review.setMember(member);
                 review.setStore(store);
                 review = reviewRepository.save(review);
 
-                return modelMapper.map(review,ReviewDto.class);
-            }else {
+                return modelMapper.map(review, ReviewDto.class);
+            } else {
                 Review revdto = reviewList.get(0);
                 revdto.setStore(store);
                 revdto.setStar(reviewDto.getStar());
                 revdto.setComment(reviewDto.getComment());
                 revdto = reviewRepository.save(revdto);
-                return modelMapper.map(revdto,ReviewDto.class);
+                return modelMapper.map(revdto, ReviewDto.class);
             }
 
 
         }
-
 
 
         return reviewDto;

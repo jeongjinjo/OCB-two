@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,6 @@ public class MemberService {
     @Transactional
     public Member signup(SignDto.signReq signDtoReq) {
 
-        //Optional<Member> idmember = memberRepository.findByUserId(signDtoReq.getUserId());
         Optional<Member> idMember = memberRepository.findByUserIdAndResignYn(signDtoReq.getUserId(), ResignYn.N);
         if (idMember.isPresent()) {
             throw new BizException("아이디 중복입니다.");
@@ -55,14 +53,7 @@ public class MemberService {
     }
 
 
-    //    public Optional<Member> authenticate(String userId,String password) {
-//        return memberRepository.findByUserIdAndPassword(userId,password);
-//    }
-
     public boolean authenticate(String userId, String password) {
-//        Member member = memberRepository.findByUserId(userId).orElseThrow(
-//                () -> new NoSuchElementException("회원을 찾을 수 없습니다. ID: " + userId));
-//        return member != null && passwordEncoder.matches(password, member.getPassword());
 
         Member member = memberRepository.findByUserId(userId)
                 .orElseThrow(() -> new NoSuchElementException("회원을 찾을 수 없습니다. ID: " + userId));
@@ -74,7 +65,6 @@ public class MemberService {
         return passwordEncoder.matches(password, member.getPassword());
     }
 
- 
 
     // 회원 아이디로 pk 찾기
     public Optional<Long> findMemberId(String userId) {
@@ -82,13 +72,50 @@ public class MemberService {
         return member.map(Member::getId);
     }
 
+    // 비밀번호 찾기
+    public String findPassword(String userId, String name, String phone) throws BizException {
+        return memberRepository.findByUserIdAndNameAndPhoneAndResignYn(userId, name, phone, ResignYn.N)
+                .map(Member::getPassword)
+                .orElseThrow(() -> new BizException("해당 아이디, 이름 및 전화번호로 등록된 회원이 없습니다."));
+    }
+
+
+
+
+    // 영속성 컨텍스트에 있는 내용이 디비와 동기화 되기 때문에 setMethod를 사용하면 update 구문이 날아감
+    @Transactional
+    public boolean updatePassword(String userId, String name, String phone) {
+        Optional<Member> dbMember = memberRepository.findByUserIdAndNameAndPhone(userId, name, phone);
+        if(dbMember.isEmpty()){
+            return false;
+        }else{
+            dbMember.get().setPassword(passwordEncoder.encode("임시1234"));
+            return true;
+        }
+    }
+
+
+
+
+    // 회원 정보 조회
+    public FindDto.InfoRes getMemberInfo(Long memberId) {
+        Optional<Member> memberOptional = memberRepository.findByIdAndResignYn(memberId, ResignYn.N);
+        if (memberOptional.isPresent()) {
+            Member member = memberOptional.get();
+            return FindDto.InfoRes.builder()
+                    .userId(member.getUserId())
+                    .name(member.getName())
+                    .nickname(member.getNickname())
+                    .phone(member.getPhone())
+                    .build();
+        } else {
+            throw new BizException("해당하는 멤버를 찾을 수 없습니다.");
+        }
+    }
 
     // 회원정보수정
     @Transactional
     public void memberUpdate(Long memberId, MemberUpdateDto.UpdateReq updateDtoReq) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-
         Member member = memberRepository.findById(memberId)
                 .filter(m -> m.getResignYn().equals(ResignYn.N))
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 회원아이디를 찾을 수 없거나 탈퇴한 회원입니다."));
@@ -147,40 +174,5 @@ public class MemberService {
                 .orElseThrow(() -> new BizException("해당 이름과 전화번호로 등록된 회원이 없거나 탈퇴하였습니다."));
     }
 
-    // 비밀번호 찾기
-    public String findPassword(String userId, String name, String phone) throws BizException {
-        return memberRepository.findByUserIdAndNameAndPhoneAndResignYn(userId, name, phone, ResignYn.N)
-                .map(Member::getPassword)
-                .orElseThrow(() -> new BizException("해당 아이디, 이름 및 전화번호로 등록된 회원이 없습니다."));
-    }
-
-    // 회원 정보 조회
-    public FindDto.InfoRes getMemberInfo(Long memberId) {
-        Optional<Member> memberOptional = memberRepository.findByIdAndResignYn(memberId, ResignYn.N);
-        if (memberOptional.isPresent()) {
-            Member member = memberOptional.get();
-            return FindDto.InfoRes.builder()
-                    .userId(member.getUserId())
-                    .name(member.getName())
-                    .nickname(member.getNickname())
-                    .phone(member.getPhone())
-                    .build();
-        } else {
-            throw new BizException("해당하는 멤버를 찾을 수 없습니다.");
-        }
-    }
-
-
-    // 영속성 컨텍스트에 있는 내용이 디비와 동기화 되기 때문에 setMethod를 사용하면 update 구문이 날아감
-    @Transactional
-    public boolean updatePassword(String userId, String name, String phone) {
-        Optional<Member> dbMember = memberRepository.findByUserIdAndNameAndPhone(userId, name, phone);
-        if(dbMember.isEmpty()){
-            return false;
-        }else{
-            dbMember.get().setPassword(passwordEncoder.encode("임시1234"));
-            return true;
-        }
-    }
 }
 

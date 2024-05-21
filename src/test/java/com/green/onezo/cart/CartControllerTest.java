@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CartControllerTest {
 
     @Autowired
-    CartItemRepository cartItemRepository;
+    CartRepository cartRepository;
 
     @Test
     @DisplayName("장바구니 아이템 추가")
@@ -30,12 +30,12 @@ class CartControllerTest {
         Menu menu = new Menu();
         menu.setId(1L);
 
-        CartItem cartItem = CartItem.builder()
+        Cart cart = Cart.builder()
                 .member(member)
                 .store(store)
                 .build();
 
-        CartItem savedItem = cartItemRepository.save(cartItem);
+        Cart savedItem = cartRepository.save(cart);
         System.out.println(savedItem);
 
         assertAll(
@@ -50,7 +50,7 @@ class CartControllerTest {
     @Test
     @DisplayName("장바구니 조회")
     void getCart() {
-        List<CartItem> list = cartItemRepository.findByMemberId(1L);
+        List<Cart> list = cartRepository.findByMemberId(1L);
         list.forEach(cartItem -> {
             System.out.println(cartItem.getId());
             System.out.println(cartItem.getStore());
