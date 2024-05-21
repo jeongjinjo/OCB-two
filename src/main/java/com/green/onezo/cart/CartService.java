@@ -54,10 +54,10 @@ public class CartService {
                 cart = cartRepository.save(cart);
                 return modelMapper.map(cart, CartDto.Cart.class);
             } else {
-                Cart dbCart = cartlist.get(0);
-                dbCart.setStore(store);
-                dbCart = cartRepository.save(dbCart);
-                return modelMapper.map(dbCart, CartDto.Cart.class);
+                Cart existingCart = cartlist.get(0);
+                existingCart.setStore(store);
+                existingCart = cartRepository.save(existingCart);
+                return modelMapper.map(existingCart, CartDto.Cart.class);
             }
         }
         return null;

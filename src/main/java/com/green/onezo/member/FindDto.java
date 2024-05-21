@@ -22,6 +22,16 @@ public class FindDto {
 
     }
 
+    @Getter
+    @Setter
+    @ToString
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserIdReq {
+        private String name;
+        private String phone;
+    }
 
     @Getter
     @Setter
