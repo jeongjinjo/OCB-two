@@ -30,8 +30,8 @@ public class CartService {
     private final CartRepository cartRepository;
     private final CartDetailRepository cartDetailRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+//    @PersistenceContext
+//    private EntityManager entityManager;
 
     // 장바구니 생성
     @Transactional
@@ -64,20 +64,41 @@ public class CartService {
     }
 
 
-    // 장바구니 담기 // 수량업뎃
+    // 장바구니 담기
     @Transactional
     public CartDto.CartDetail addCart(CartDto.CartDetail cartDetailDto, Long memberId) {
         ModelMapper modelMapper = new ModelMapper();
         Optional<Cart> cartOptional = cartRepository.findCartByMemberId(memberId);
-        if (cartOptional.isPresent()) {
-            CartDetail cartDetail = new CartDetail();
-            cartDetail.setCart(cartOptional.get());
-            cartDetail.setQuantity(cartDetailDto.getQuentity());
-            Menu menu = menuRepository.findById(cartDetailDto.getMenuId()).orElseThrow(() -> new EntityNotFoundException("메뉴를 선택해주세요"));
-            cartDetail.setMenu(menu);
-            cartDetail = cartDetailRepository.save(cartDetail);
-            return modelMapper.map(cartDetail, CartDto.CartDetail.class);
-        }
+//        if (cartOptional.isPresent()) {
+//            CartDetail cartDetail = new CartDetail();
+//            cartDetail.setCart(cartOptional.get());
+//            cartDetail.setQuantity(cartDetailDto.getQuentity());
+//            Menu menu = menuRepository.findById(cartDetailDto.getMenuId()).orElseThrow(() -> new EntityNotFoundException("메뉴를 선택해주세요"));
+//            cartDetail.setMenu(menu);
+//            cartDetail = cartDetailRepository.save(cartDetail);
+//            return modelMapper.map(cartDetail, CartDto.CartDetail.class);
+//        }
+            if (cartOptional.isPresent()) {
+                Cart cart = cartOptional.get();
+                Menu menu = menuRepository.findById(cartDetailDto.getMenuId()).orElseThrow(() -> new EntityNotFoundException("메뉴를 선택해주세요"));
+
+                Optional<CartDetail> cartDetailOptional = cartDetailRepository.findByCartIdAndMenuId(cart.getId(), menu.getId());
+
+                CartDetail cartDetail;
+                if (cartDetailOptional.isPresent()) {
+                    cartDetail = cartDetailOptional.get();
+                    cartDetail.setQuantity(cartDetail.getQuantity() + cartDetailDto.getQuentity());
+                } else {
+                    cartDetail = new CartDetail();
+                    cartDetail.setCart(cart);
+                    cartDetail.setQuantity(cartDetailDto.getQuentity());
+                    cartDetail.setMenu(menu);
+                }
+
+                cartDetail = cartDetailRepository.save(cartDetail);
+                return modelMapper.map(cartDetail, CartDto.CartDetail.class);
+
+            }
 
         return null;
     }
@@ -100,8 +121,6 @@ public class CartService {
     // 장바구니 상세 조회
     @Transactional
     public List<CartDto.CartDetailRes> getCartDetail(Long memberId) {
-
-        //ModelMapper modelMapper = new ModelMapper();
         List<CartDetail> cartDetails = cartDetailRepository.findByMemberId(memberId);
 
         if (cartDetails.isEmpty()) {
@@ -122,37 +141,36 @@ public class CartService {
                 .toList();
     }
 
-//    // 장바구니 삭제
-//    public void deleteCart(Long memberId) {
-//        Optional<Cart> cartOptional = cartRepository.findCartByMemberId(memberId);
-//
-//        if (cartOptional.isPresent()) {
-//            Cart cart = cartOptional.get();
-//            cartDetailRepository.deleteAll(cart.getCartDetails()); // 관련 CartDetail 모두 삭제
-//            cartRepository.delete(cart);
-//        } else {
-//            throw new EntityNotFoundException("장바구니를 찾을 수 없습니다.");
-//        }
-//    }
-//
-//    // 장바구니 상세 삭제
-//    @Transactional
-//    public void deleteCartDetail(Long cartDetailId, Long memberId) {
-//        Optional<CartDetail> cartDetailOptional = cartDetailRepository.findById(cartDetailId);
-//
-//        if (cartDetailOptional.isPresent()) {
-//            CartDetail cartDetail = cartDetailOptional.get();
-//            Cart cart = cartDetail.getCart();
-//
-//            if (!cart.getMember().getId().equals(memberId)) {
-//                throw new EntityNotFoundException("장바구니를 찾을 수 없습니다.");
-//            }
-//
-//            cartDetailRepository.delete(cartDetail);
-//        } else {
-//            throw new EntityNotFoundException("장바구니를 찾을 수 없습니다.");
-//        }
-//    }
+    // 장바구니 삭제
+    public void deleteCart(Long memberId) {
+        Optional<Cart> cartOptional = cartRepository.findCartByMemberId(memberId);
+
+        if (cartOptional.isPresent()) {
+            Cart cart = cartOptional.get();
+            cartDetailRepository.deleteAll(cart.getCartDetails());
+            cartRepository.delete(cart);
+        } else {
+            throw new EntityNotFoundException("장바구니를 찾을 수 없습니다.");
+        }
+    }
+
+    // 장바구니 상세 삭제
+    @Transactional
+    public void deleteCartDetail(Long cartDetailId, Long memberId) {
+        Optional<CartDetail> cartDetailOptional = cartDetailRepository.findById(cartDetailId);
+
+        if (cartDetailOptional.isPresent()) {
+            CartDetail cartDetail = cartDetailOptional.get();
+            Cart cart = cartDetail.getCart();
+
+            if (!cart.getMember().getId().equals(memberId)) {
+                throw new EntityNotFoundException("장바구니를 찾을 수 없습니다.");
+            }
+            cartDetailRepository.deleteById(cartDetailId);
+        } else {
+            throw new EntityNotFoundException("장바구니를 찾을 수 없습니다.");
+        }
+    }
 
 }
 

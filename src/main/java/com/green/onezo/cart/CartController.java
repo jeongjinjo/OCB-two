@@ -3,6 +3,7 @@ package com.green.onezo.cart;
 import com.green.onezo.member.Member;
 import com.green.onezo.member.MemberRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +26,9 @@ public class CartController {
     private final MemberRepository memberRepository;
 
 
+    // 장바구니 생성
     @Operation(summary = "장바구니 생성 API",
-    description = "로그인한 유저가 매장/포장 여부 선택 시, 장바구니 테이블에 멤버 pk, 매장 id, 포장여부가 insert 된다.")
+    description = "로그인한 유저가 매장/포장 여부 선택 시, 장바구니 테이블에 멤버 pk, 매장 id, 포장여부가 insert 됩니다.")
     @PostMapping("")
     public ResponseEntity<String> createCart(@RequestBody @Valid CartDto.Cart cartDto,
                                          Authentication authentication){
@@ -41,8 +43,9 @@ public class CartController {
         return ResponseEntity.status(HttpStatus.OK).body("장바구니에 입력되었습니다.");
     }
 
+    // 장바구니 담기
     @Operation(summary = "장바구니 담기 API",
-            description = "메뉴를 담을 때, 장바구니 상세 테이블에 메뉴 id와 수량이 저장된다.")
+            description = "메뉴를 담을 때, 장바구니 상세 테이블에 메뉴 id와 수량이 저장됩니다.")
     @PostMapping("/add")
     public ResponseEntity<String> addCart(@RequestBody CartDto.CartDetail cartDetailDto, Principal principal){
         String userId = principal.getName();
@@ -51,17 +54,18 @@ public class CartController {
 
         CartDto.CartDetail result = cartService.addCart(cartDetailDto, memberId);
         if (result == null) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body("장바구니 아이템을 찾을 수 없습니다.");
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body("장바구니를 찾을 수 없습니다.");
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body("업데이트 되었습니다.");
+        return ResponseEntity.status(HttpStatus.OK).body("장바구니에 입력되었습니다.");
 
     }
 
 
     // 장바구니 조회
     @GetMapping("/get")
-    @Operation(summary = "장바구니 조회 API", description = "로그인한 유저가 선택한 지점명과 주소, 포장여부를 조회합니다.")
+    @Operation(summary = "장바구니 조회 API", 
+            description = "유저가 선택한 지점명과 주소, 포장여부를 조회합니다.")
     public ResponseEntity<CartDto.CartRes> getCart(Principal principal) {
         String userId = principal.getName();
         Optional<Member> member = memberRepository.findByUserId(userId);
@@ -90,61 +94,45 @@ public class CartController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-//    // 장바구니 삭제
-//    @DeleteMapping("/delete")
-//    @Operation(summary = "장바구니 삭제 API", description = "장바구니를 삭제합니다.")
-//    public ResponseEntity<Void> deleteCart(Principal principal) {
-//        String userId = principal.getName();
-//        Optional<Member> member = memberRepository.findByUserId(userId);
-//        Long memberId = member.get().getId();
-//
-//        cartService.deleteCart(memberId);
-//        return ResponseEntity.noContent().build();
-//    }
-//
-//    // 장바구니 상세 삭제
-//    @DeleteMapping("/detail/delete")
-//    @Operation(summary = "장바구니 상세 삭제 API", description = "장바구니 상세를 삭제합니다.")
-//    public ResponseEntity<Void> deleteCartDetail(@Parameter(description = "장바구니 상세 ID", required = true) @PathVariable Long cartDetailId,
-//                                                 Principal principal) {
-//        String userId = principal.getName();
-//        Optional<Member> member = memberRepository.findByUserId(userId);
-//        Long memberId = member.get().getId();
-//
-//        cartService.deleteCartDetail(cartDetailId, memberId);
-//        return ResponseEntity.noContent().build();
-//    }
 
 
-//    @DeleteMapping("/reset/{cartItemId}")
-//    @Operation(summary = "장바구니 초기화", description = "장바구니를 삭제합니다.")
-//    public ResponseEntity<String> deleteCart(@Parameter(description = "카트 아이템 pk", required = true)
-//                                             @PathVariable Long cartItemId) {
-//        try {
-//            cartService.deleteCart(cartItemId);
-//            return ResponseEntity.ok("장바구니를 초기화 했습니다.");
-//        } catch (IllegalArgumentException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("장바구니를 찾을 수 없습니다.");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러: " + e.getMessage());
-//        }
-//    }
+    // 장바구니 삭제
+    @DeleteMapping("/delete")
+    @Operation(summary = "장바구니 삭제 API", description = "장바구니를 삭제합니다.")
+    public ResponseEntity<String> deleteCart(Principal principal) {
+        String userId = principal.getName();
+        Optional<Member> member = memberRepository.findByUserId(userId);
+        Long memberId = member.get().getId();
 
-//
-//    @DeleteMapping("/delete/{cartDetailId}")
-//    @Operation(summary = "장바구니 아이템 삭제", description = "장바구니 아이템을 삭제합니다.")
-//    public ResponseEntity<String> deleteCartItem(@Parameter(description = "카트 디테일 pk", required = true)
-//                                                 @PathVariable Long cartDetailId) {
-//        try {
-//            cartService.deleteCartItem(cartDetailId);
-//            return ResponseEntity.ok("장바구니 아이템을 삭제했습니다.");
-//        } catch (IllegalArgumentException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("장바구니 아이템을 찾을 수 없습니다.");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러: " + e.getMessage());
-//        }
-//    }
-//
+        try {
+            cartService.deleteCart(memberId);
+            return ResponseEntity.ok("장바구니를 초기화 했습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("장바구니를 찾을 수 없습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러" + e.getMessage());
+        }
+
+    }
 
 
+    // 장바구니 상세 삭제
+    @DeleteMapping("/detail/delete/{cartDetailId}")
+    @Operation(summary = "장바구니 상세 삭제 API", description = "장바구니 상세를 삭제합니다.")
+    public ResponseEntity<String> deleteCartDetail(@Parameter(description = "장바구니 상세 ID", required = true) @PathVariable Long cartDetailId,
+                                                 Principal principal) {
+        String userId = principal.getName();
+        Optional<Member> member = memberRepository.findByUserId(userId);
+        Long memberId = member.get().getId();
+
+        try {
+            cartService.deleteCartDetail(cartDetailId, memberId);
+            return ResponseEntity.ok("장바구니 상세를 삭제했습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("장바구니 상세를 찾을 수 없습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러" + e.getMessage());
+        }
+
+    }
 }
