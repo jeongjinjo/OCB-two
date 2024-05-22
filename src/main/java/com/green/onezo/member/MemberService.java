@@ -167,8 +167,18 @@ public class MemberService {
     }
 
 
+//    // 아이디 찾기
+//    public String findUserId(String name, String phone) throws BizException {
+//        return memberRepository.findByNameAndPhoneAndResignYn(name, phone, ResignYn.N)
+//                .map(member -> member.getUserId().substring(0, member.getUserId().length() - 3) + "***")
+//                .orElseThrow(() -> new BizException("해당 이름과 전화번호로 등록된 회원이 없거나 탈퇴하였습니다."));
+//    }
+
     // 아이디 찾기
-    public String findUserId(String name, String phone) throws BizException {
+    public String findUserId(FindDto.UserIdReq userIdReq) throws BizException {
+        String name = userIdReq.getName();
+        String phone = userIdReq.getPhone();
+
         return memberRepository.findByNameAndPhoneAndResignYn(name, phone, ResignYn.N)
                 .map(member -> member.getUserId().substring(0, member.getUserId().length() - 3) + "***")
                 .orElseThrow(() -> new BizException("해당 이름과 전화번호로 등록된 회원이 없거나 탈퇴하였습니다."));

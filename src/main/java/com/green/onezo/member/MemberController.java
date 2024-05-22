@@ -212,15 +212,27 @@ public class MemberController {
         }
     }
 
-    @GetMapping("/findId/{name}/{phone}")
+//    @GetMapping("/findId/{name}/{phone}")
+//    @Operation(summary = "아이디 찾기 API",
+//            description = "회원의 이름과 전화번호를 입력하면 끝 3글자를 제외한 회원 아이디가 반환됩니다.")
+//    public ResponseEntity<FindDto.UserIdRes> findUserId(
+//            @Parameter(description = "이름", required = true) @PathVariable String name,
+//            @Parameter(description = "전화번호", required = true) @PathVariable String phone
+//    ) {
+//        try {
+//            String userId = memberService.findUserId(name, phone);
+//            return ResponseEntity.ok(new FindDto.UserIdRes(userId));
+//        } catch (BizException e) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//    }
+
+    @GetMapping("/findId")
     @Operation(summary = "아이디 찾기 API",
             description = "회원의 이름과 전화번호를 입력하면 끝 3글자를 제외한 회원 아이디가 반환됩니다.")
-    public ResponseEntity<FindDto.UserIdRes> findUserId(
-            @Parameter(description = "이름", required = true) @PathVariable String name,
-            @Parameter(description = "전화번호", required = true) @PathVariable String phone
-    ) {
+    public ResponseEntity<FindDto.UserIdRes> findUserId(FindDto.UserIdReq userIdReq) {
         try {
-            String userId = memberService.findUserId(name, phone);
+            String userId = memberService.findUserId(userIdReq);
             return ResponseEntity.ok(new FindDto.UserIdRes(userId));
         } catch (BizException e) {
             return ResponseEntity.badRequest().build();

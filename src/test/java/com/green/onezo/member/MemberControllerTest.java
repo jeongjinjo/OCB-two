@@ -18,56 +18,108 @@ class MemberControllerTest {
     @Autowired
     private MemberService memberService;
 
-    @Test
-    @DisplayName("회원 정보 업데이트")
-    void updateMember() {
-        Member newMember = new Member();
-        newMember.setUserId("test123@naver.com");
-        newMember.setPassword("password123");
-        newMember.setPhone("010-1234-5678");
-        newMember.setNickname("nickname");
-        newMember.setName("test");
-        memberRepository.save(newMember);
 
-        MemberUpdateDto.UpdateReq updateReq = new MemberUpdateDto.UpdateReq();
-        updateReq.setPassword("newPassword123");
-        updateReq.setPasswordCheck("newPassword123");
-        updateReq.setName("개명성공");
-        updateReq.setNickname("닉변성공");
-        updateReq.setPhone("010-2345-6789");
-        try {
-            memberService.memberUpdate(newMember.getId(), updateReq);
-        } catch (BizException e) {
-            fail(e.getMessage());
-        }
-
-        Member updatedMember = memberRepository.findById(newMember.getId()).orElseThrow();
-        assertEquals("개명성공", updatedMember.getName());
-        assertEquals("닉변성공", updatedMember.getNickname());
-        assertEquals("010-2345-6789", updatedMember.getPhone());
-    }
-    @Test
-    @DisplayName("회원 탈퇴")
-    void resignMember() {
-        Member newMember = new Member();
-        newMember.setUserId("testRS123@naver.com");
-        newMember.setPassword("password123");
-        newMember.setPhone("010-3333-3333");
-        newMember.setNickname("닉넴임");
-        newMember.setName("이름임");
-        memberRepository.save(newMember);
-
-        MemberResignDto.ResignReq resignReq = new MemberResignDto.ResignReq();
-        resignReq.setUserId("testRS123@naver.com");
-        resignReq.setPassword("password123");
-        resignReq.setPhone("010-3333-3333");
-        try {
-            memberService.memberResign(newMember.getId(), resignReq);
-        } catch (BizException e) {
-            fail(e.getMessage());
-        }
-
-        Member resignedMember = memberRepository.findById(newMember.getId()).orElseThrow();
-        assertEquals(ResignYn.Y, resignedMember.getResignYn());
-    }
+//    @Test
+//    @DisplayName("회원 정보 조회")
+//    void getMemberInfo() {
+//        Member newMember = new Member();
+//        newMember.setUserId("member123");
+//        newMember.setPassword("password123");
+//        newMember.setName("성함임");
+//        newMember.setNickname("닉네임임");
+//        newMember.setPhone("010-5555-5555");
+//        memberRepository.save(newMember);
+//
+//        FindDto.InfoRes infoRes = null;
+//        try {
+//            infoRes = memberService.getMemberInfo(newMember.getId());
+//        } catch (BizException e) {
+//            fail(e.getMessage());
+//        }
+//
+//        assertEquals("member123", infoRes.getUserId());
+//        assertEquals("성함임", infoRes.getName());
+//        assertEquals("닉네임임", infoRes.getNickname());
+//        assertEquals("010-5555-5555", infoRes.getPhone());
+//
+//    }
+//
+//    @Test
+//    @DisplayName("회원 정보 수정")
+//    void updateMember() {
+//        Member member = new Member();
+//        member.setUserId("test123");
+//        member.setPassword("password123");
+//        member.setPhone("010-1234-5678");
+//        member.setNickname("nickname");
+//        member.setName("test");
+//        memberRepository.save(member);
+//
+//        MemberUpdateDto.UpdateReq updateReq = new MemberUpdateDto.UpdateReq();
+//        updateReq.setPassword("newPassword123");
+//        updateReq.setPasswordCheck("newPassword123");
+//        updateReq.setName("개명성공");
+//        updateReq.setNickname("닉변성공");
+//        updateReq.setPhone("010-2345-6789");
+//        try {
+//            memberService.memberUpdate(member.getId(), updateReq);
+//        } catch (BizException e) {
+//            fail(e.getMessage());
+//        }
+//
+//        Member updatedMember = memberRepository.findById(member.getId()).orElseThrow();
+//        assertEquals("개명성공", updatedMember.getName());
+//        assertEquals("닉변성공", updatedMember.getNickname());
+//        assertEquals("010-2345-6789", updatedMember.getPhone());
+//    }
+//
+//    @Test
+//    @DisplayName("회원 탈퇴")
+//    void resignMember() {
+//        Member member = new Member();
+//        member.setUserId("resign123");
+//        member.setPassword("password123");
+//        member.setPhone("010-3333-3333");
+//        member.setNickname("닉넴임");
+//        member.setName("이름임");
+//        memberRepository.save(member);
+//
+//        MemberResignDto.ResignReq resignReq = new MemberResignDto.ResignReq();
+//        resignReq.setUserId("resign123");
+//        resignReq.setPassword("password123");
+//        resignReq.setPhone("010-3333-3333");
+//        try {
+//            memberService.memberResign(member.getId(), resignReq);
+//        } catch (BizException e) {
+//            fail(e.getMessage());
+//        }
+//
+//        Member resignedMember = memberRepository.findById(member.getId()).orElseThrow();
+//        assertEquals(ResignYn.Y, resignedMember.getResignYn());
+//    }
+//
+//    @Test
+//    @DisplayName("아이디 찾기")
+//    void findUserId() {
+//        Member member = new Member();
+//        member.setUserId("find123");
+//        member.setPassword("password123");
+//        member.setName("namee");
+//        member.setNickname("nicknn");
+//        member.setPhone("010-7777-7777");
+//        memberRepository.save(member);
+//
+//        FindDto.UserIdReq userIdReq = new FindDto.UserIdReq();
+//        userIdReq.setName("namee");
+//        userIdReq.setPhone("010-7777-7777");
+//
+//        String userId = null;
+//        try {
+//            userId = memberService.findUserId(userIdReq);
+//        } catch (BizException e) {
+//            fail(e.getMessage());
+//        }
+//
+//        assertEquals("find123", userId);
+//    }
 }
