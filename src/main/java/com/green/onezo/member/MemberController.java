@@ -153,6 +153,7 @@ public class MemberController {
         }
     }
 
+
     // 회원 정보 조회
     @GetMapping("/info")
     @Operation(summary = "회원 정보 조회 API",
@@ -170,7 +171,7 @@ public class MemberController {
         }
     }
 
-
+    // 회원 정보 수정
     @PutMapping("/update")
     @Operation(summary = "회원 정보 수정 API",
             description = "로그인 한 회원의 패스워드(패스워드확인), 이름, 닉네임, 전화번호를 변경 할 수 있습니다.")
@@ -193,6 +194,7 @@ public class MemberController {
         }
     }
 
+    // 회원 탈퇴
     @PutMapping("/resign")
     @Operation(summary = "회원 탈퇴 API",
             description = "로그인 한 회원의 아이디, 패스워드, 전화번호를 입력해 회원탈퇴를 합니다.")
@@ -211,22 +213,8 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원 탈퇴 실패: " + e.getMessage());
         }
     }
-
-//    @GetMapping("/findId/{name}/{phone}")
-//    @Operation(summary = "아이디 찾기 API",
-//            description = "회원의 이름과 전화번호를 입력하면 끝 3글자를 제외한 회원 아이디가 반환됩니다.")
-//    public ResponseEntity<FindDto.UserIdRes> findUserId(
-//            @Parameter(description = "이름", required = true) @PathVariable String name,
-//            @Parameter(description = "전화번호", required = true) @PathVariable String phone
-//    ) {
-//        try {
-//            String userId = memberService.findUserId(name, phone);
-//            return ResponseEntity.ok(new FindDto.UserIdRes(userId));
-//        } catch (BizException e) {
-//            return ResponseEntity.badRequest().build();
-//        }
-//    }
-
+    
+    // 아이디 찾기
     @GetMapping("/findId")
     @Operation(summary = "아이디 찾기 API",
             description = "회원의 이름과 전화번호를 입력하면 끝 3글자를 제외한 회원 아이디가 반환됩니다.")
