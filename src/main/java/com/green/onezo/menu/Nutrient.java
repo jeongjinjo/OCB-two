@@ -16,8 +16,8 @@ public class Nutrient {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
+    @JoinColumn(name = "menu_info_id")
+    private MenuInfo menuInfo;
 
     @Column(nullable = false)
     private float kcal;

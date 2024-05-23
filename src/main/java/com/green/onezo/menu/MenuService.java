@@ -34,7 +34,7 @@ public class MenuService {
         return menus;
     }
 
-    public MenuDetailDto getAllMenuDetails(Long menuId) {
+    public MenuDetailDto getAllMenuDetails(Long menuId,Long menuInfoId) {
         ModelMapper modelMapper = new ModelMapper();
 
         Optional<Menu> menuOpt = menuRepository.findById(menuId);
@@ -42,7 +42,7 @@ public class MenuService {
             Menu menu = menuOpt.get();
 
             List<MenuInfo> menuInfos = menuInfoRepository.findAllByMenuId(menuId);
-            List<Nutrient> nutrients = nutrientRepository.findAllByMenuId(menuId);
+            List<Nutrient> nutrients = nutrientRepository.findAllByMenuInfoId(menuInfoId);
 
             MenuDetailDto menuDetailDto = modelMapper.map(menu, MenuDetailDto.class);
 
