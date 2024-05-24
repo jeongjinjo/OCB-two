@@ -18,8 +18,8 @@ public class  MenuController {
 
     @Operation(summary = "메뉴 정보 보내주기")
     @GetMapping("/menus/{id}")
-    public ResponseEntity<MenuDetailDto> getMenuDetails(@PathVariable Long id) {
-        MenuDetailDto menuDetail = menuService.getAllMenuDetails(id);
+    public ResponseEntity<MenuDetailDto> getMenuDetails(@PathVariable Long id,Long menuInfoId) {
+        MenuDetailDto menuDetail = menuService.getAllMenuDetails(id,menuInfoId);
 
         if (menuDetail != null){
             return ResponseEntity.ok(menuDetail);
