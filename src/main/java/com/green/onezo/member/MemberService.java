@@ -95,8 +95,6 @@ public class MemberService {
     }
 
 
-
-
     // 회원 정보 조회
     public FindDto.InfoRes getMemberInfo(Long memberId) {
         Optional<Member> memberOptional = memberRepository.findByIdAndResignYn(memberId, ResignYn.N);
@@ -113,7 +111,7 @@ public class MemberService {
         }
     }
 
-    // 회원정보수정
+    // 회원 정보 수정
     @Transactional
     public void memberUpdate(Long memberId, MemberUpdateDto.UpdateReq updateDtoReq) {
         Member member = memberRepository.findById(memberId)
@@ -150,7 +148,7 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    // 회원탈퇴
+    // 회원 탈퇴
     public void memberResign(Long memberId, MemberResignDto.ResignReq resignReq) {
         Member member = memberRepository.findById(memberId)
                 .filter(m -> m.getResignYn().equals(ResignYn.N))
@@ -165,14 +163,6 @@ public class MemberService {
         member.setResignYn(ResignYn.Y);
         memberRepository.save(member);
     }
-
-
-//    // 아이디 찾기
-//    public String findUserId(String name, String phone) throws BizException {
-//        return memberRepository.findByNameAndPhoneAndResignYn(name, phone, ResignYn.N)
-//                .map(member -> member.getUserId().substring(0, member.getUserId().length() - 3) + "***")
-//                .orElseThrow(() -> new BizException("해당 이름과 전화번호로 등록된 회원이 없거나 탈퇴하였습니다."));
-//    }
 
     // 아이디 찾기
     public String findUserId(FindDto.UserIdReq userIdReq) throws BizException {
