@@ -128,20 +128,18 @@ public class MemberService {
         if (updateDtoReq.getName() != null && !updateDtoReq.getName().isEmpty()) {
             member.setName(updateDtoReq.getName());
         }
+
         if (updateDtoReq.getNickname() != null && !updateDtoReq.getNickname().isEmpty() && !updateDtoReq.getNickname().equals(member.getNickname())) {
             if (memberRepository.findByNicknameAndResignYn(updateDtoReq.getNickname(), ResignYn.N).isPresent()) {
                 throw new BizException("닉네임 중복입니다.");
             }
             member.setNickname(updateDtoReq.getNickname());
-        } else {
-            member.setNickname(updateDtoReq.getNickname());
         }
+
         if (updateDtoReq.getPhone() != null && !updateDtoReq.getPhone().isEmpty() && !updateDtoReq.getPhone().equals(member.getPhone())) {
             if (memberRepository.findByPhoneAndResignYn(updateDtoReq.getPhone(), ResignYn.N).isPresent()) {
                 throw new BizException("전화번호 중복입니다.");
             }
-            member.setPhone(updateDtoReq.getPhone());
-        } else {
             member.setPhone(updateDtoReq.getPhone());
         }
 
