@@ -124,12 +124,7 @@ public class MemberController {
     }
 
 
-    //카카오 로그인
-    @GetMapping("oauth/kakao/callback")
-    public String kakaoCallback(String code) {
-        System.out.println("code=" + code);
-        return code;
-    }
+
 
     // 비밀번호 찾기 -> 임시 비밀번호 발급
     @GetMapping("/findPw/{userId}/{name}/{phone}")

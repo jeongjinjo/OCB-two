@@ -43,6 +43,8 @@ public class SecurityConfig {
                                                 "/error",
                                                 "/",
                                                 "/index.html",
+                                                "/loginform.html",
+                                                "/login.html",
                                                 "/image/**",
                                                 "/auth/signUp",
                                                 "/auth/checkId",
@@ -52,7 +54,7 @@ public class SecurityConfig {
                                                 "/auth/{userId}",
                                                 "/auth/findId/{name}/{phone}",
                                                 "/auth/findPw/{userId}/{name}/{phone}",
-
+                                                "/oauth/**",
                                                 "/menus/**",
                                                 "/menuAll",
                                                 "/swagger-ui/**",
