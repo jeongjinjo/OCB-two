@@ -26,6 +26,7 @@ public class StoreController {
     private final StoreService storeService;
     private final StoreRepository storeRepository;
     private final MemberRepository memberRepository;
+    private final FavoriteStoreRepository favoriteStoreRepository;
 
 
     @GetMapping("/store/{storeId}/detail")
@@ -80,5 +81,11 @@ public class StoreController {
         }else{
             return true;
         }
+    }
+    @Operation(summary = "유저 아이디로 관심매장 적용")
+    @PostMapping("/favoriteStore")
+    public ResponseEntity<FavoriteStoreDto> addFavoriteStore(@RequestBody FavoriteStoreDto favoriteStoreDto){
+        FavoriteStoreDto saveFavoriteStore = storeService.addFavoriteStore(favoriteStoreDto);
+        return  ResponseEntity.ok(saveFavoriteStore);
     }
 }
