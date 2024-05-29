@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,11 +23,6 @@ public class MenuService {
     private final MenuInfoRepository menuInfoRepository;
     private final NutrientRepository nutrientRepository;
 
-
-    //    //아이디 값으로 메뉴 리스트
-//    public Optional<Menu> menuId(Long id){
-//        return Optional.of(menuRepository.findById(id).get());
-//    }
 
     public List<Menu> menuList(){
 
@@ -54,25 +50,8 @@ public class MenuService {
         return null;
     }
 
-
-
-
-//    //아이디값으로 영양정보
-//    public Optional<MenuInfo> menuInfoId(Long id){
-//        return Optional.of(menuInfoRepository.findById(id).get());
-//    }
-//    //아이디값으로 칼로리정보
-//    public Optional<Nutrient> nutrient(Long id){
-//        return Optional.of(nutrientRepository.findById(id).get());
-//    }
-//
-//    //영양 정보
-//    public List<MenuInfo> menuInfos() {
-//        return menuInfoRepository.findAll();
-//    }
-//    //칼로리 정보
-//    public List<Nutrient> nutrients(){
-//        return nutrientRepository.findAll();
+//    public List<MenuStatus> status(){
+//        return status();
 //    }
 
     }

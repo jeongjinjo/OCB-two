@@ -16,4 +16,7 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
     List<Purchase> findByMemberId(Long memberId);
 
     List<Purchase> findByTotalPriceAndTakeInOut(int totalPrice, TakeInOut takeInOut);
+
+
+
 }

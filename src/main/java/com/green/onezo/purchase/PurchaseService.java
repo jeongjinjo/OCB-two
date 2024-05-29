@@ -67,4 +67,10 @@ public class PurchaseService {
         return null;
     }
 
+
+    public Optional<PurchaseState> getState(Long purchaseId){
+        Optional<Purchase> purchase = purchaseRepository.findById(purchaseId);
+        System.out.println(purchaseId);
+        return purchase.map(Purchase::getPurchaseState);
+    }
 }
