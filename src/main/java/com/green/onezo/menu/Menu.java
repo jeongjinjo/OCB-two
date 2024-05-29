@@ -33,6 +33,9 @@ public class Menu {
     @Column(nullable = false)
     private String menuName;
 
+    @Enumerated(EnumType.STRING)
+    private MenuStatus menuStatus;
+
     private String menuImage;
 
 

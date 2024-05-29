@@ -1,20 +1,14 @@
 package com.green.onezo.purchase;
 
-import com.green.onezo.member.Member;
-import com.green.onezo.pay.Pay;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,5 +39,13 @@ public class PurchaseController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(result);
 
+    }
+
+    @Operation(summary = "현황 조회",
+                description = "현황 조회")
+    @GetMapping("/state/{id}")
+    public ResponseEntity<PurchaseState> getPurchase(@PathVariable Long id){
+        Optional<PurchaseState> purchaseState = purchaseService.getState(id);
+        return purchaseState.map(ResponseEntity::ok).orElseGet(()-> ResponseEntity.notFound().build());
     }
 }

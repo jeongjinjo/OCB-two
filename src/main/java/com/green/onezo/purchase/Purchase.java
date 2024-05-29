@@ -37,5 +37,8 @@ public class Purchase {
     @Enumerated(EnumType.STRING)
     private TakeInOut takeInOut;
 
+    @Enumerated(EnumType.STRING)
+    private PurchaseState purchaseState;
+
 
 }

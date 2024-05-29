@@ -22,6 +22,7 @@ public class MenuDetailDto {
     private Store store;
     private int price;
     private String menuName;
+    private MenuStatus menuStatus;
     private List<MenuInfo> menuInfo = new ArrayList<>();
     private List<Nutrient> nutrient = new ArrayList<>();
 
