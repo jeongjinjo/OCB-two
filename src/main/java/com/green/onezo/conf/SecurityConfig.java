@@ -43,6 +43,7 @@ public class SecurityConfig {
                                                 "/error",
                                                 "/",
                                                 "/index.html",
+                                                "/kakao/login",
                                                 "/loginform.html",
                                                 "/login.html",
                                                 "/image/**",

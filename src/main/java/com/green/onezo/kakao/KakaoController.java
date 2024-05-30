@@ -1,29 +1,29 @@
 package com.green.onezo.kakao;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequiredArgsConstructor
+@RequestMapping(value="/kakao")
+//@Operation(summary = )
 public class KakaoController {
 
-    private final KakaoService kakaoService;
+//    @GetMapping("oauth/kakao/callback")
+//            public String kakaoCallback(String code){
+//        System.out.println("code : "+code);
+//        kakaoService.getKakaoToken(code);
+//        return "카카오 로그인 성공";
+//    }
 
-    //카카오 로그인
-    @GetMapping("oauth/kakao/callback")
-            public String kakaoCallback(String code){
-        System.out.println("code : "+code);
+    @PostMapping("login")
+    public String kakaoLogin(
+            @RequestBody KakaoLoginDto kakaoLoginDto) throws Exception{
+        System.out.println("#########"+ kakaoLoginDto);
 
-//    public @ResponseBody String kakaoCallback(String code) {
-        kakaoService.getKakaoToken(code);
+        // 1. 회원가입
+        // 2. accessToken, refreshTokren 발급해줘야되
 
-//        String redirectTo="http://localhost:3000";
-//
-//        return "redirect:"+redirectTo;
-        return "카카오 로그인 성공";
-
+        return "member/testPage";
     }
 
 }
+
