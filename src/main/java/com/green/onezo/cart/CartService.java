@@ -52,6 +52,7 @@ public class CartService {
             } else {
                 Cart existingCart = cartlist.get(0);
                 existingCart.setStore(store);
+                existingCart.setTakeInOut(cartDto.getTakeInOut());
                 existingCart = cartRepository.save(existingCart);
                 return modelMapper.map(existingCart, CartDto.Cart.class);
             }
