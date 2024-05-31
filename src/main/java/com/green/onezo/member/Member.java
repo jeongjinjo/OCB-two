@@ -52,6 +52,9 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Pay> pays = new ArrayList<>();
 
+    @Column(unique = true)
+    private String email;
+
 
     private User member;
 

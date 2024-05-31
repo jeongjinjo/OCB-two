@@ -44,6 +44,10 @@ public class SignDto {
         @NotBlank(message = "전화번호는 필수 입력 사항입니다.")
         private String phone;
 
+        @Schema(description = "사용자의 이메일")
+        @NotBlank(message = "이메일은 필수입니다.")
+        private String email;
+
     }
 
     @Getter
