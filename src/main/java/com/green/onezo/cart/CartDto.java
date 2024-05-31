@@ -75,4 +75,14 @@ public class CartDto {
 
     }
 
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TakeInOutDto {
+
+        @NotNull(message = "포장여부를 선택하세요")
+        private TakeInOut takeInOut;
+
+    }
+
 }
