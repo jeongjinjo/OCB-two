@@ -123,9 +123,6 @@ public class MemberController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-
-
-
     // 비밀번호 찾기 -> 임시 비밀번호 발급
     @GetMapping("/findPw/{userId}/{name}/{phone}")
     @Operation(summary = "임시 비밀번호 발급",
@@ -139,7 +136,7 @@ public class MemberController {
         try {
             boolean result = memberService.updatePassword(userId, name, phone);
             if(result)
-                return ResponseEntity.ok(new FindDto.PasswordRes("임시1234"));
+                return ResponseEntity.ok(new FindDto.PasswordRes("imsi1234"));
             else
                 return ResponseEntity.ok(new FindDto.PasswordRes("아이디 이름 전화번호를 다시 입력하세요"));
 
@@ -147,7 +144,6 @@ public class MemberController {
             return ResponseEntity.badRequest().build();
         }
     }
-
 
     // 회원 정보 조회
     @GetMapping("/info")

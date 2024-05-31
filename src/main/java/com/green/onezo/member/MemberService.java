@@ -41,7 +41,8 @@ public class MemberService {
 
         Member member = new Member();
         member.setUserId(signDtoReq.getUserId());
-        member.setPassword(passwordEncoder.encode(signDtoReq.getPassword()));//이거 암호화 진행 시켜야됨 jasypt
+        member.setPassword(passwordEncoder.encode(signDtoReq.getPassword()));
+//        member.setPassword(signDtoReq.getPassword());
         member.setNickname(signDtoReq.getNickname());
         member.setName(signDtoReq.getName());
         member.setPhone(signDtoReq.getPhone());
@@ -63,6 +64,7 @@ public class MemberService {
         }
 
         return passwordEncoder.matches(password, member.getPassword());
+
     }
 
 
@@ -89,7 +91,8 @@ public class MemberService {
         if(dbMember.isEmpty()){
             return false;
         }else{
-            dbMember.get().setPassword(passwordEncoder.encode("임시1234"));
+            dbMember.get().setPassword(passwordEncoder.encode("imsi1234"));
+//            dbMember.get().setPassword("imsi1234");
             return true;
         }
     }
@@ -123,6 +126,7 @@ public class MemberService {
                 throw new BizException("재확인 비밀번호가 일치하지 않습니다.");
             }
             member.setPassword(passwordEncoder.encode(updateDtoReq.getPassword()));
+//            member.setPassword(updateDtoReq.getPassword());
         }
 
         if (updateDtoReq.getName() != null && !updateDtoReq.getName().isEmpty()) {
