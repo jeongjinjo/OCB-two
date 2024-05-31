@@ -1,5 +1,6 @@
 package com.green.onezo.cart;
 
+import com.green.onezo.enum_column.TakeInOut;
 import com.green.onezo.member.Member;
 import com.green.onezo.member.MemberRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -94,7 +95,17 @@ public class CartController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
+    // 포장 여부 수정
+    @PutMapping("/take")
+    @Operation(summary = "포장 여부 수정 API", description = "TAKE_OUT/ DINE_IN 수정" )
+    public ResponseEntity<CartDto.TakeInOutDto> updateTakeInOut(Principal principal, @RequestBody @Valid CartDto.TakeInOutDto takeInOutDto) {
+        String userId = principal.getName();
+        Optional<Member> member = memberRepository.findByUserId(userId);
+        Long memberId = member.get().getId();
 
+        CartDto.TakeInOutDto result = cartService.takeInOutUpdate(memberId, takeInOutDto);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
 
     // 장바구니 삭제
     @DeleteMapping("/delete")
