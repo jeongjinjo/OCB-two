@@ -14,13 +14,8 @@ public class StoreDto {
 
     private String storeName;
     private String address;
-
-
-    @JsonIgnore
     private String addressOld;
-    @JsonIgnore
     private String storePhone;
-    @JsonIgnore
     private String storeHours;
     @JsonIgnore
     private TakeInOut orderType;
