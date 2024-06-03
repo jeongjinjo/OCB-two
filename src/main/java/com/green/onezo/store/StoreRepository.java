@@ -1,6 +1,7 @@
 package com.green.onezo.store;
 
 import com.green.onezo.enum_column.TakeInOut;
+import com.green.onezo.schedule.ScheduleDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +13,6 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     Optional<Store> findById(Long id);
 
     List<TakeInOut> findByOrderType(TakeInOut orderType);
-
 
 
 }
