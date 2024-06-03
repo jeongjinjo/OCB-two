@@ -10,10 +10,10 @@ import com.green.onezo.schedule.ScheduleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 
@@ -35,11 +35,14 @@ public class StoreService {
     // 매장상세 조회
     public StoreDto getStoreById(Long storeId) {
         Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new EntityNotFoundException("스토어아이디?" + storeId));
+                .orElseThrow(() -> new EntityNotFoundException("스토어아이디" + storeId + "를 찾을 수 없습니다."));
 
         return StoreDto.builder()
+                .id(store.getId())
                 .storeName(store.getStoreName())
+                .addressOld(store.getAddressOld())
                 .address(store.getAddress())
+                .storeHours(store.getStoreHours())
                 .storePhone(store.getStorePhone())
                 .build();
     }
@@ -90,16 +93,13 @@ public class StoreService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         //사용자 정보와 매장 정보가져오기
-        Optional<Member> memberOptional = memberRepository.findByUserId(user.getName());
+        Optional<Member> memberOptional = memberRepository.findByUserId(user.getUsername());
         Optional<Store> storeOptional = storeRepository.findById(favoriteStoreDto.getStoreId());
 
         if (memberOptional.isPresent() && storeOptional.isPresent()) {
             Member member = memberOptional.get();
             Store store = storeOptional.get();
-            //관심 매장 등록 되있는지 확인
-            Optional<FavoriteStore> favoriteStoreOptional = favoriteStoreRepository.findByMemberIdAndStoreId(member.getId(), store.getId());
 
-            if (favoriteStoreOptional.isEmpty()) {
                 //관심매장이 등록 되있지 않은 경우 새로 등록
                 FavoriteStore favoriteStore = new FavoriteStore();
                 favoriteStore.setMember(member);
@@ -107,11 +107,8 @@ public class StoreService {
                 favoriteStore = favoriteStoreRepository.save(favoriteStore);
 
                 return modelMapper.map(favoriteStore, FavoriteStoreDto.class);
-            } else {
-                //이미 관심 매장에 등록된 경우 기존 정보 반환
-                return modelMapper.map(favoriteStoreOptional.get(), FavoriteStoreDto.class);
             }
-        }
+
         return favoriteStoreDto;
     }
 

@@ -5,6 +5,7 @@ import com.green.onezo.member.Member;
 import com.green.onezo.member.MemberRepository;
 import com.green.onezo.schedule.ScheduleDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,12 +28,14 @@ public class StoreController {
     private final FavoriteStoreRepository favoriteStoreRepository;
 
 
-    @GetMapping("/store/{storeId}/detail")
-    public ResponseEntity<StoreDto> getStoreById(@PathVariable Long store) {
-        StoreDto storeDto = storeService.getStoreById(store);
+    @Operation(summary = "매장 상세조회")
+    @GetMapping("/detail/{storeId}")
+    public ResponseEntity<StoreDto> getStoreById(
+            @Parameter(description = "매장 ID", required = true)
+            @PathVariable Long storeId) {
+        StoreDto storeDto = storeService.getStoreById(storeId);
         return new ResponseEntity<>(storeDto, HttpStatus.OK);
     }
-
     //매장 식사 + 포장 여부
     @PostMapping("/orderType")
     public ModelAndView orderType(@RequestParam("orderType") TakeInOut orderType) {
@@ -51,6 +54,7 @@ public class StoreController {
 
 
     //매장주소 리스트
+    @Operation(summary = "매장주소 리스트")
     @GetMapping("/storeList")
     public ResponseEntity<List<StoreDto>> getStoreAddress() {
         List<StoreDto> storeDtoList = storeService.storeDto();
