@@ -37,13 +37,10 @@ public class Review {
     @Column(nullable = false)
     private String comment;
 
-
     private String review;
-
 
     @Column(nullable = false)
     private int star;
-
 
     private ResignYn resignYn;
 
