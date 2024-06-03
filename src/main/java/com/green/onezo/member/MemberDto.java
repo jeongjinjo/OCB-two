@@ -48,6 +48,10 @@ public class MemberDto {
     @Schema(description = "사용자의 탈퇴여부")
     private ResignYn resignYn;
 
+    @Schema(description = "사용자의 이메일")
+    @NotBlank(message = "이메일은 필수입니다.")
+    private String email;
+
 }
 
 

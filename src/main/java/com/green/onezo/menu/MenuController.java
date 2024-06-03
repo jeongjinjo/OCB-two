@@ -18,8 +18,8 @@ public class  MenuController {
 
     @Operation(summary = "메뉴 정보 보내주기")
     @GetMapping("/menus/{id}")
-    public ResponseEntity<MenuDetailDto> getMenuDetails(@PathVariable Long id) {
-        MenuDetailDto menuDetail = menuService.getAllMenuDetails(id);
+    public ResponseEntity<MenuDetailDto> getMenuDetails(@PathVariable Long id,Long menuInfoId) {
+        MenuDetailDto menuDetail = menuService.getAllMenuDetails(id,menuInfoId);
 
         if (menuDetail != null){
             return ResponseEntity.ok(menuDetail);
@@ -35,41 +35,13 @@ public class  MenuController {
         return ResponseEntity.ok(menus);
     }
 
+//    @Operation(summary = "메뉴재고 상태 여부")
+//    @GetMapping("/status")
+//    public ResponseEntity<List<MenuStatus>> menuStatus(){
+//        List<MenuStatus> statuses = menuService.status();
+//        return ResponseEntity.ok(statuses);
+//    }
 
-    //아이디 값으로 메뉴리스트
-//    @GetMapping("/menuList/{id}")
-//    public ResponseEntity<Menu> getMenu(@PathVariable Long id) {
-//        Optional<Menu> menuOptional = menuService.menuId(id);
-//        return menuOptional.map(ResponseEntity::ok)
-//                .orElseGet(()-> ResponseEntity.notFound().build());
-//    }
-//
-//    //아이디 값으로 영양정보
-//    @GetMapping("/menuInfo/{id}")
-//    public ResponseEntity<MenuInfo> getMenuInfoById(@PathVariable Long id) {
-//        Optional<MenuInfo> menuInfoOptional = menuService.menuInfoId(id);
-//        return menuInfoOptional.map(ResponseEntity::ok)
-//                .orElseGet(() -> ResponseEntity.notFound().build());
-//    }
-//    //아이디 값으로 칼로리정보
-//    @GetMapping("/nutrient/{id}")
-//    public ResponseEntity<Nutrient> getNutrientById(@PathVariable Long id) {
-//        Optional<Nutrient> nutrientOptional = menuService.nutrient(id);
-//            return  nutrientOptional.map(ResponseEntity::ok)
-//                    .orElseGet(() -> ResponseEntity.notFound().build());
-//        }
 
-    //영양 정보
-//    @GetMapping("/menuInfos")
-//    public ResponseEntity<List<MenuInfo>> getMenuInfos(){
-//        List<MenuInfo> menuInfos = menuService.menuInfos();
-//        return ResponseEntity.ok(menuInfos);
-//    }
-//    //칼로리 정보
-//    @GetMapping("nutrient")
-//    public ResponseEntity<List<Nutrient>> getNutrients(){
-//        List<Nutrient> nutrients = menuService.nutrients();
-//        return ResponseEntity.ok(nutrients);
-//    }
     }
 

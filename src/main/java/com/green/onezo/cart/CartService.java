@@ -1,15 +1,12 @@
 package com.green.onezo.cart;
 
-import com.green.onezo.global.error.BizException;
 import com.green.onezo.member.Member;
 import com.green.onezo.member.MemberRepository;
 import com.green.onezo.menu.Menu;
 import com.green.onezo.menu.MenuRepository;
 import com.green.onezo.store.Store;
 import com.green.onezo.store.StoreRepository;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -18,11 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,54 +25,69 @@ public class CartService {
     private final MenuRepository menuRepository;
     private final MemberRepository memberRepository;
     private final StoreRepository storeRepository;
-    private final CartItemRepository cartItemRepository;
+    private final CartRepository cartRepository;
     private final CartDetailRepository cartDetailRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
 
+    // 장바구니 생성
     @Transactional
-    public CartItemDetailDto createCart(CartItemDetailDto cartItemDetailDto) {
+    public CartDto.Cart createCart(CartDto.Cart cartDto) {
         ModelMapper modelMapper = new ModelMapper();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
 
         Optional<Member> memberOptional = memberRepository.findByUserId(user.getUsername());
-        Optional<Store> storeOptional = storeRepository.findById(cartItemDetailDto.getStoreId());
+        Optional<Store> storeOptional = storeRepository.findById(cartDto.getStoreId());
         if (memberOptional.isPresent() && storeOptional.isPresent()) {
             Member member = memberOptional.get();
             Store store = storeOptional.get();
-            List<CartItem> cartItemlist = cartItemRepository.findByMemberId(member.getId());
+            List<Cart> cartlist = cartRepository.findByMemberId(member.getId());
 
-            if (cartItemlist.isEmpty()) {
-                CartItem cartItem = modelMapper.map(cartItemDetailDto, CartItem.class);
-                cartItem.setMember(member);
-                cartItem.setStore(store);
-                cartItem = cartItemRepository.save(cartItem);
-                return modelMapper.map(cartItem, CartItemDetailDto.class);
+            if (cartlist.isEmpty()) {
+                Cart cart = modelMapper.map(cartDto, Cart.class);
+                cart.setMember(member);
+                cart.setStore(store);
+                cart = cartRepository.save(cart);
+                return modelMapper.map(cart, CartDto.Cart.class);
             } else {
-                CartItem dbCart = cartItemlist.get(0);
-                dbCart.setStore(store);
-                dbCart = cartItemRepository.save(dbCart);
-                return modelMapper.map(dbCart, CartItemDetailDto.class);
+                Cart existingCart = cartlist.get(0);
+                existingCart.setStore(store);
+                existingCart.setTakeInOut(cartDto.getTakeInOut());
+                existingCart = cartRepository.save(existingCart);
+                return modelMapper.map(existingCart, CartDto.Cart.class);
             }
         }
         return null;
     }
 
+
+    // 장바구니 담기
     @Transactional
-    public CartDetailDto addCart(CartDetailDto cartDetailDto, Long memberId) {
+    public CartDto.CartDetail addCart(CartDto.CartDetail cartDetailDto, Long memberId) {
         ModelMapper modelMapper = new ModelMapper();
-        Optional<CartItem> cartItemOptional = cartItemRepository.findCartItemByMemberId(memberId);
-        if (cartItemOptional.isPresent()) {
-            CartDetail cartDetail = new CartDetail();
-            cartDetail.setCartItem(cartItemOptional.get());
-            cartDetail.setQuantity(cartDetailDto.getQuentity());
-            Menu menu = menuRepository.findById(cartDetailDto.getMenuId()).orElseThrow(() -> new EntityNotFoundException("메뉴를 선택해주세요"));
-            cartDetail.setMenu(menu);
-            cartDetail = cartDetailRepository.save(cartDetail);
-            return modelMapper.map(cartDetail, CartDetailDto.class);
-        }
+        Optional<Cart> cartOptional = cartRepository.findCartByMemberId(memberId);
+
+            if (cartOptional.isPresent()) {
+                Cart cart = cartOptional.get();
+                Menu menu = menuRepository.findById(cartDetailDto.getMenuId()).orElseThrow(() -> new EntityNotFoundException("메뉴를 선택해주세요"));
+
+                Optional<CartDetail> cartDetailOptional = cartDetailRepository.findByCartIdAndMenuId(cart.getId(), menu.getId());
+
+                CartDetail cartDetail;
+                if (cartDetailOptional.isPresent()) {
+                    cartDetail = cartDetailOptional.get();
+                    cartDetail.setQuantity(cartDetail.getQuantity() + cartDetailDto.getQuentity());
+                } else {
+                    cartDetail = new CartDetail();
+                    cartDetail.setCart(cart);
+                    cartDetail.setQuantity(cartDetailDto.getQuentity());
+                    cartDetail.setMenu(menu);
+                }
+
+                cartDetail = cartDetailRepository.save(cartDetail);
+                return modelMapper.map(cartDetail, CartDto.CartDetail.class);
+
+            }
 
         return null;
     }
@@ -86,71 +95,85 @@ public class CartService {
 
     // 장바구니 조회
     @Transactional
-    public List<CartItemDto.CartRes> getCart(Long memberId) {
+    public CartDto.CartRes getCart(Long memberId) {
+        Optional<Cart> cartOpt = cartRepository.findCartByMemberId(memberId);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-
-        Optional<Member> memberOptional = memberRepository.findByUserId(user.getUsername());
-        if (!memberOptional.isPresent()) {
-            throw new EntityNotFoundException("해당하는 사용자를 찾을 수 없습니다.");
+        if(cartOpt.isPresent()) {
+            Cart cart = cartOpt.get();
+            Store store = cart.getStore();
+            return new CartDto.CartRes(cart.getId(), store.getStoreName(), store.getAddress(), cart.getTakeInOut());
+        } else  {
+            throw new EntityNotFoundException("장바구니를 찾을 수 없습니다.");
         }
-        Member member = memberOptional.get();
-
-        List<CartItem> cartItems = cartItemRepository.findByMemberId(memberId);
-        List<CartItemDto.CartRes> cartItemResponses = new ArrayList<>();
-        for (CartItem item : cartItems) {
-            for (CartDetail detail : item.getCartDetails()) {
-                CartItemDto.CartRes cartItemRes = CartItemDto.CartRes.builder()
-                        .storeName(item.getStore().getStoreName())
-                        .address(item.getStore().getAddress())
-                        .takeInOut(item.getTakeInOut())
-                        .build();
-                cartItemResponses.add(cartItemRes);
-            }
-        }
-        return cartItemResponses;
     }
 
     // 장바구니 상세 조회
     @Transactional
-    public List<CartItemDto.CartDetailRes> getCartDetail(Long memberId) {
+    public List<CartDto.CartDetailRes> getCartDetail(Long memberId) {
+        List<CartDetail> cartDetails = cartDetailRepository.findByMemberId(memberId);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-
-        Optional<Member> memberOptional = memberRepository.findByUserId(user.getUsername());
-        if (!memberOptional.isPresent()) {
-            throw new EntityNotFoundException("해당하는 사용자를 찾을 수 없습니다.");
+        if (cartDetails.isEmpty()) {
+            throw new EntityNotFoundException("장바구니를 찾을 수 없습니다.");
         }
-        Member member = memberOptional.get();
 
-        List<CartItem> cartItems = cartItemRepository.findByMemberId(member.getId());
-        List<CartItemDto.CartDetailRes> cartItemResponses = new ArrayList<>();
+        return cartDetails.stream()
+                .map(cartDetail -> {
+                    Menu menu = cartDetail.getMenu();
+                    return new CartDto.CartDetailRes(
+                            cartDetail.getId(),
+                            menu.getMenuName(),
+                            cartDetail.getQuantity(),
+                            menu.getPrice(),
+                            menu.getMenuImage()
+                    );
+                })
+                .toList();
+    }
 
-        for (CartItem item : cartItems) {
-            for (CartDetail detail : item.getCartDetails()) {
-                CartItemDto.CartDetailRes cartDetailRes = CartItemDto.CartDetailRes.builder()
-                        .cartDetailId(detail.getId())
-                        .menuName(detail.getMenu().getMenuName())
-                        .quantity(detail.getQuantity())
-                        .price(detail.getMenu().getPrice())
-                        .menuImage(detail.getMenu().getMenuImage())
-                        .build();
-                cartItemResponses.add(cartDetailRes);
+    // 포장 여부 수정
+    @Transactional
+    public CartDto.TakeInOutDto takeInOutUpdate(Long memberId, CartDto.TakeInOutDto takeInOutDto) {
+        Optional<Cart> cartOpt = cartRepository.findCartByMemberId(memberId);
+
+        if(cartOpt.isPresent()) {
+            Cart cart = cartOpt.get();
+            cart.setTakeInOut(takeInOutDto.getTakeInOut());
+            return new CartDto.TakeInOutDto(cart.getTakeInOut());
+        } else  {
+            throw new EntityNotFoundException("장바구니를 찾을 수 없습니다.");
+        }
+    }
+
+
+    // 장바구니 삭제
+    public void deleteCart(Long memberId) {
+        Optional<Cart> cartOptional = cartRepository.findCartByMemberId(memberId);
+
+        if (cartOptional.isPresent()) {
+            Cart cart = cartOptional.get();
+            cartDetailRepository.deleteAll(cart.getCartDetails());
+            cartRepository.delete(cart);
+        } else {
+            throw new EntityNotFoundException("장바구니를 찾을 수 없습니다.");
+        }
+    }
+
+    // 장바구니 상세 삭제
+    @Transactional
+    public void deleteCartDetail(Long cartDetailId, Long memberId) {
+        Optional<CartDetail> cartDetailOptional = cartDetailRepository.findById(cartDetailId);
+
+        if (cartDetailOptional.isPresent()) {
+            CartDetail cartDetail = cartDetailOptional.get();
+            Cart cart = cartDetail.getCart();
+
+            if (!cart.getMember().getId().equals(memberId)) {
+                throw new EntityNotFoundException("장바구니를 찾을 수 없습니다.");
             }
+            cartDetailRepository.deleteById(cartDetailId);
+        } else {
+            throw new EntityNotFoundException("장바구니를 찾을 수 없습니다.");
         }
-        return cartItemResponses;
-    }
-
-    // 장바구니 전체 삭제
-    public void deleteCart(Long cartItemId) {
-        cartItemRepository.deleteById(cartItemId);
-    }
-
-    // 장바구니 아이템 개별 삭제
-    public void deleteCartItem(Long cartDetailId) {
-        cartDetailRepository.deleteById(cartDetailId);
     }
 
 }

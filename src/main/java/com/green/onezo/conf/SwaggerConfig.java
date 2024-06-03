@@ -32,21 +32,21 @@ public class SwaggerConfig {
     }
 
 
-        @Bean
-        public OpenAPI openAPI() {
-            // SecurityScheme 설정
-            String jwtSchemeName = "accessToken";
-            SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
-            Components components = new Components()
-                    .addSecuritySchemes(jwtSchemeName, new SecurityScheme()
-                            .name(jwtSchemeName)
-                            .type(SecurityScheme.Type.HTTP) // HTTP 방식
-                            .scheme("bearer")
-                            .bearerFormat("JWT"));
-            return new OpenAPI()
-                    .components(components)
-                    .addSecurityItem(securityRequirement);
-        }
-
-
+    @Bean
+    public OpenAPI openAPI() {
+        // SecurityScheme 설정
+        String jwtSchemeName = "accessToken";
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
+        Components components = new Components()
+                .addSecuritySchemes(jwtSchemeName, new SecurityScheme()
+                        .name(jwtSchemeName)
+                        .type(SecurityScheme.Type.HTTP) // HTTP 방식
+                        .scheme("bearer")
+                        .bearerFormat("JWT"));
+        return new OpenAPI()
+                .components(components)
+                .addSecurityItem(securityRequirement);
     }
+
+
+}
