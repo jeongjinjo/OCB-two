@@ -44,14 +44,13 @@ public class ReviewService {
 
                 return modelMapper.map(review, ReviewDto.class);
 
-            } else {
-                Review revdto = reviewList.get(0);
-                revdto.setStore(store);
-                revdto.setStar(reviewDto.getStar());
-                revdto.setComment(reviewDto.getComment());
-                revdto = reviewRepository.save(revdto);
-                return modelMapper.map(revdto, ReviewDto.class);
+            }
+
+
+        }
 
         return reviewDto;
     }
+
 }
+
