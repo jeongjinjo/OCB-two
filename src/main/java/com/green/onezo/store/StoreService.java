@@ -5,6 +5,8 @@ import com.green.onezo.cart.CartRepository;
 import com.green.onezo.enum_column.TakeInOut;
 import com.green.onezo.member.Member;
 import com.green.onezo.member.MemberRepository;
+import com.green.onezo.schedule.ScheduleDto;
+import com.green.onezo.schedule.ScheduleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ public class StoreService {
     private final CartRepository cartRepository;
     private final MemberRepository memberRepository;
     private final FavoriteStoreRepository favoriteStoreRepository;
+    private final ScheduleRepository scheduleRepository;
 
 
     // 매장상세 조회
@@ -111,4 +114,6 @@ public class StoreService {
         }
         return favoriteStoreDto;
     }
+
+
 }
