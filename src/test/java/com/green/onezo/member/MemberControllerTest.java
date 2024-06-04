@@ -12,16 +12,25 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class MemberControllerTest {
 
-    @Autowired
-    MemberRepository memberRepository;
-
-    @Autowired
-    private MemberService memberService;
-
-
+//    @Autowired
+//    MemberRepository memberRepository;
+//
+//    @Autowired
+//    private MemberController memberController;
+//
+//    @Autowired
+//    private MemberService memberService;
+//
+//
+//
 //    @Test
 //    @DisplayName("회원 정보 조회")
 //    void getMemberInfo() {
+//
+//        FindDto.InfoRes memberRes = new FindDto.InfoRes();
+//        memberRes.setUserId("user123");
+//        System.out.println(memberRes);
+//
 //        Member newMember = new Member();
 //        newMember.setUserId("member123");
 //        newMember.setPassword("password123");
@@ -30,12 +39,9 @@ class MemberControllerTest {
 //        newMember.setPhone("010-5555-5555");
 //        memberRepository.save(newMember);
 //
-//        FindDto.InfoRes infoRes = null;
-//        try {
-//            infoRes = memberService.getMemberInfo(newMember.getId());
-//        } catch (BizException e) {
-//            fail(e.getMessage());
-//        }
+//        FindDto.InfoRes infoRes = new FindDto.InfoRes();
+//        infoRes.setUserId(newMember.getUserId());
+//        System.out.println(newMember);
 //
 //        assertEquals("member123", infoRes.getUserId());
 //        assertEquals("성함임", infoRes.getName());
@@ -47,12 +53,13 @@ class MemberControllerTest {
 //    @Test
 //    @DisplayName("회원 정보 수정")
 //    void updateMember() {
+//
 //        Member member = new Member();
-//        member.setUserId("test123");
+//        member.setUserId("member123");
 //        member.setPassword("password123");
-//        member.setPhone("010-1234-5678");
-//        member.setNickname("nickname");
-//        member.setName("test");
+//        newMember.setName("성함임");
+//        newMember.setNickname("닉네임임");
+//        newMember.setPhone("010-5555-5555");
 //        memberRepository.save(member);
 //
 //        MemberUpdateDto.UpdateReq updateReq = new MemberUpdateDto.UpdateReq();
@@ -61,16 +68,11 @@ class MemberControllerTest {
 //        updateReq.setName("개명성공");
 //        updateReq.setNickname("닉변성공");
 //        updateReq.setPhone("010-2345-6789");
-//        try {
-//            memberService.memberUpdate(member.getId(), updateReq);
-//        } catch (BizException e) {
-//            fail(e.getMessage());
-//        }
 //
-//        Member updatedMember = memberRepository.findById(member.getId()).orElseThrow();
-//        assertEquals("개명성공", updatedMember.getName());
-//        assertEquals("닉변성공", updatedMember.getNickname());
-//        assertEquals("010-2345-6789", updatedMember.getPhone());
+//        memberRepository.findById(member.getId()).orElseThrow();
+//        assertEquals("개명성공", member.getName());
+//        assertEquals("닉변성공", member.getNickname());
+//        assertEquals("010-2345-6789", member.getPhone());
 //    }
 //
 //    @Test
