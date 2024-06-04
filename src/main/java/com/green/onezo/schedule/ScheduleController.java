@@ -1,8 +1,10 @@
 package com.green.onezo.schedule;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,11 +19,12 @@ import java.util.List;
 @Tag(name = "schedule-controller", description = "매장")
 public class ScheduleController {
     private final ScheduleService scheduleService;
-    //조정진씨가 추가
+
     @Operation(summary = "store_id 검색을 통해 매장 일정 조회")
-    @GetMapping("/schedule")
-    public ResponseEntity<List<ScheduleDto>> getSchedulesByStoreId(@PathVariable Long storeId) {
+    @GetMapping("/schedule/{storeId}")
+    public ResponseEntity<List<ScheduleDto>> getSchedulesByStoreId(@Parameter (description="매장 ID",required = true)
+            @PathVariable Long storeId){
         List<ScheduleDto> schedules = scheduleService.getSchedulesByStoreId(storeId);
-        return ResponseEntity.ok(schedules);
+        return new ResponseEntity<>(schedules, HttpStatus.OK);
     }
 }
