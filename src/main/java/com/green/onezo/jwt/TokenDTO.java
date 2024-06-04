@@ -8,4 +8,5 @@ public class TokenDTO {
     private String password;
     private String nickname;
     private String phone;
+    private String email;
 }

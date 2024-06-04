@@ -1,29 +1,55 @@
 package com.green.onezo.kakao;
 
-import org.springframework.web.bind.annotation.*;
+import com.green.onezo.enum_column.Role;
+import com.green.onezo.jwt.JwtTokenDto;
+import com.green.onezo.jwt.JwtUtil;
+import com.green.onezo.member.Member;
+import com.green.onezo.member.MemberDetailsService;
+import com.green.onezo.member.MemberRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value="/kakao")
-//@Operation(summary = )
+@RequestMapping("/kakao")
+@RequiredArgsConstructor
 public class KakaoController {
+    private final KakaoDetailService kakaoDetailService;
+    private final JwtUtil jwtUtil;
+    private final MemberRepository memberRepository;
 
-//    @GetMapping("oauth/kakao/callback")
-//            public String kakaoCallback(String code){
-//        System.out.println("code : "+code);
-//        kakaoService.getKakaoToken(code);
-//        return "카카오 로그인 성공";
-//    }
+    @Operation(summary = "로그인 기능",
+            description = "DB에 이메일과 닉네임을 대조해 회원이라면 로그인")
+    @PostMapping("/login")
+    public ResponseEntity<?> kakaologin(@RequestBody @Valid KakaoRequestDto kakaoRequestDto) {
+        String nickname = kakaoRequestDto.getNickname();
+        String email = kakaoRequestDto.getEmail();
 
-//    @PostMapping("login")
-//    public String kakaoLogin(
-//            @RequestBody KakaoLoginDto kakaoLoginDto) throws Exception{
-//        System.out.println("#########"+ kakaoLoginDto);
-//
-//        // 1. 회원가입
-//        // 2. accessToken, refreshTokren 발급해줘야되
-////컨트롤러에 은진님에 보내주시면 db-> 있으면 true 로그인 없으면 false-> 회원가입
-//        return "member/testPage";
-//    }
+        Member member = memberRepository.findByEmail(email);
+        if (member == null) {
+            member = memberRepository.save(
+                        Member.builder()
+                            .userId(email)
+                            .email(email)
+                            .nickname(nickname)
+                            .phone("010-0000-0000")
+                            .role(Role.USER)
+                            .build()
+                        );
+        }
 
+        UserDetails userDetails = kakaoDetailService.loadUserByUsername(email);
+        String accessToken = jwtUtil.generateAccessToken(userDetails);
+        String refreshToken = jwtUtil.generateRefreshToken(userDetails);
+
+        JwtTokenDto jwtTokenDto = new JwtTokenDto(member.getId(), accessToken, refreshToken);
+        return ResponseEntity.status(HttpStatus.OK).body(jwtTokenDto);
+    }
 }
-

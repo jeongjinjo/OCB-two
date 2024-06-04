@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ScheduleDto {
     private Long schedule_id;
-    private Long store_id;
+    private Long storeId;
     private LocalDate start_date;
     private LocalDate end_date;
     private String content;
