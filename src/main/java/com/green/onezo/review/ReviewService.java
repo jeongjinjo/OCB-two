@@ -52,6 +52,9 @@ public class ReviewService {
                 revdto = reviewRepository.save(revdto);
                 return modelMapper.map(revdto, ReviewDto.class);
 
+            }
+        }
         return reviewDto;
     }
 }
+
