@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.green.onezo.enum_column.TakeInOut;
 import com.green.onezo.member.Member;
 import com.green.onezo.pay.Pay;
+import com.green.onezo.store.Store;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -33,5 +34,8 @@ public class PurchaseDto {
     private String storeName;
 
     private TakeInOut takeInOut;
+
+    private Store store;
+
 
 }

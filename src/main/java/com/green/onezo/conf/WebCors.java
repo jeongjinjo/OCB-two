@@ -37,13 +37,13 @@ public class WebCors implements WebMvcConfigurer {
 //                        ""); // 기타 경로는 인터셉터 적용 제외
 //    }
 
-//     CORS 설정을 추가
+    //     CORS 설정을 추가
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**") // 모든 경로에 대해 CORS 설정 적용
-                .allowedOrigins("*") // 모든 오리진(Origin)에서 요청 허용
-                .allowedHeaders("*") // 모든 헤더 허용
-                .allowedMethods( // 모든 HTTP 메서드 허용
+        registry.addMapping("/**")
+                .allowedOrigins("https://13fa-118-45-167-118.ngrok-free.app") // ngrok URL 명시
+                .allowedHeaders("*")
+                .allowedMethods(
                         HttpMethod.GET.name(),
                         HttpMethod.POST.name(),
                         HttpMethod.PUT.name(),
@@ -51,6 +51,6 @@ public class WebCors implements WebMvcConfigurer {
                         HttpMethod.DELETE.name(),
                         HttpMethod.OPTIONS.name()
                 )
-                .maxAge(3600); // 프리플라이트 요청의 유효 시간 설정
+                .maxAge(3600);
     }
 }
