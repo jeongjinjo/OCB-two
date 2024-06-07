@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class FavoriteStoreDto {
 
     private Long StoreId;
-
-
+    private String address;
+    private String storeName;
 
 }
