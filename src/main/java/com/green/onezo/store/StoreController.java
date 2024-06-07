@@ -32,6 +32,7 @@ public class StoreController {
     public ResponseEntity<StoreDto> getStoreById(
             @Parameter(description = "매장 ID", required = true)
             @PathVariable Long storeId) {
+
         StoreDto storeDto = storeService.getStoreById(storeId);
         return new ResponseEntity<>(storeDto, HttpStatus.OK);
     }

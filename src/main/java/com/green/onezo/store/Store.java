@@ -1,6 +1,7 @@
 package com.green.onezo.store;
 
 import com.green.onezo.enum_column.TakeInOut;
+import com.green.onezo.review.Review;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,5 +37,9 @@ public class Store {
 
     @Enumerated(EnumType.STRING)
     private TakeInOut orderType;
+
+    @ManyToOne
+    @JoinColumn(name = "review_id")
+    private Review review;
 
 }
