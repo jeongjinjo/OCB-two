@@ -88,7 +88,7 @@ public class StoreService {
     }
 
     //관심매장
-    public FavoriteStoreDto addFavoriteStore(FavoriteStoreDto favoriteStoreDto) {
+    public FavoriteFindDto addFavoriteStore(FavoriteFindDto favoriteFindDto) {
 
         ModelMapper modelMapper = new ModelMapper();
         //현재 인증된 사용자 정보 가져오기
@@ -96,7 +96,7 @@ public class StoreService {
         User user = (User) authentication.getPrincipal();
         //사용자 정보와 매장 정보가져오기
         Optional<Member> memberOptional = memberRepository.findByUserId(user.getUsername());
-        Optional<Store> storeOptional = storeRepository.findById(favoriteStoreDto.getStoreId());
+        Optional<Store> storeOptional = storeRepository.findById(favoriteFindDto.getStoreId());
 
         if (memberOptional.isPresent() && storeOptional.isPresent()) {
             Member member = memberOptional.get();
@@ -109,11 +109,9 @@ public class StoreService {
             favoriteStore = favoriteStoreRepository.save(favoriteStore);
             System.out.println(favoriteStore);
 
-            FavoriteStoreDto favoriteStoreDto1 = modelMapper.map(favoriteStore, FavoriteStoreDto.class);
-            favoriteStoreDto1.setAddress(favoriteStore.getStore().getAddress());
-            System.out.println(favoriteStoreDto1);
+            FavoriteFindDto favoriteFindDto1 = modelMapper.map(favoriteStore, FavoriteFindDto.class);
 
-            return favoriteStoreDto1;
+            return favoriteFindDto1;
         }
 
         return null;
