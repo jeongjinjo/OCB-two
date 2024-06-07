@@ -41,7 +41,7 @@ public class WebCors implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://13fa-118-45-167-118.ngrok-free.app") // ngrok URL 명시
+                .allowedOrigins("*") // ngrok URL 명시
                 .allowedHeaders("*")
                 .allowedMethods(
                         HttpMethod.GET.name(),

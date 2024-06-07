@@ -35,8 +35,7 @@ public class SecurityConfig {
                 .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer.disable());
         http
                 .httpBasic(httpSecurityHttpBasicConfigurer -> httpSecurityHttpBasicConfigurer.disable());
-        http
-                .cors(withDefaults());
+
         http
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                                 authorizationManagerRequestMatcherRegistry

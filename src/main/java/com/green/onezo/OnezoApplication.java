@@ -8,7 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableFeignClients
-@OpenAPIDefinition(servers = {@Server(url = "https://13fa-118-45-167-118.ngrok-free.app/")})
+//@OpenAPIDefinition(servers = {@Server(url = "https://13fa-118-45-167-118.ngrok-free.app/")})
 public class OnezoApplication {
 
 	public static void main(String[] args) {
