@@ -17,6 +17,7 @@ public class StoreDto {
     private String addressOld;
     private String storePhone;
     private String storeHours;
+
     @JsonIgnore
     private TakeInOut orderType;
 
