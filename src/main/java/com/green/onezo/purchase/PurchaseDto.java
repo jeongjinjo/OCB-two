@@ -24,8 +24,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PurchaseDto {
-    @JsonIgnore
-    private Long id;
+
+    private Long purchaseId;
     @NotBlank
     private LocalDateTime payDate;
 

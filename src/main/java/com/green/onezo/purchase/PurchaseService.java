@@ -36,6 +36,7 @@ public class PurchaseService {
         if (memberOptional.isPresent()) {
             Member member = memberOptional.get();
             List<Purchase> purchaselist = purchaseRepository.findByMemberId(member.getId());
+
             if (!purchaselist.isEmpty()) {
                 for (Purchase purchase : purchaselist) {
                     PurchaseDto purchaseDto = modelMapper.map(purchase, PurchaseDto.class);

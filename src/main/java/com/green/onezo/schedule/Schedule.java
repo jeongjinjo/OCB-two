@@ -22,7 +22,7 @@ public class Schedule {
     private Long scheduleId;
 
     @Column(name = "store_id")
-    private Store store;
+    private Long storeId;
 
     private LocalDate start_date;
 

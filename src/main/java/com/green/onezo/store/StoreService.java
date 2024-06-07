@@ -5,6 +5,8 @@ import com.green.onezo.cart.CartRepository;
 import com.green.onezo.enum_column.TakeInOut;
 import com.green.onezo.member.Member;
 import com.green.onezo.member.MemberRepository;
+import com.green.onezo.review.Review;
+import com.green.onezo.review.ReviewRepository;
 import com.green.onezo.schedule.ScheduleDto;
 import com.green.onezo.schedule.ScheduleRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -32,6 +34,7 @@ public class StoreService {
     private final MemberRepository memberRepository;
     private final FavoriteStoreRepository favoriteStoreRepository;
     private final ScheduleRepository scheduleRepository;
+    private final ReviewRepository reviewRepository;
 
 
     // 매장상세 조회
@@ -46,6 +49,10 @@ public class StoreService {
                 .address(store.getAddress())
                 .storeHours(store.getStoreHours())
                 .storePhone(store.getStorePhone())
+                .comment(Review.builder()
+                        .comment(store.getReview().getComment())
+                        .build())
+                .nickname(store.getReview().getMember().getNickname())
                 .build();
     }
 
