@@ -3,7 +3,6 @@ package com.green.onezo.store;
 import com.green.onezo.enum_column.TakeInOut;
 import com.green.onezo.member.Member;
 import com.green.onezo.member.MemberRepository;
-import com.green.onezo.schedule.ScheduleDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,6 +35,7 @@ public class StoreController {
         StoreDto storeDto = storeService.getStoreById(storeId);
         return new ResponseEntity<>(storeDto, HttpStatus.OK);
     }
+
     //매장 식사 + 포장 여부
     @PostMapping("/orderType")
     public ModelAndView orderType(@RequestParam("orderType") TakeInOut orderType) {
@@ -92,7 +92,11 @@ public class StoreController {
         return ResponseEntity.ok(saveFavoriteStore);
     }
 
-    
 
-
+    @Operation(summary = "관심매장 조회")
+    @GetMapping("/list")
+    public ResponseEntity<List<FavoriteStoreDto>> getFavoriteStores() {
+        List<FavoriteStoreDto> favoriteStores = storeService.selectStore();
+        return ResponseEntity.ok(favoriteStores);
+    }
 }

@@ -17,6 +17,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -100,17 +102,36 @@ public class StoreService {
             Member member = memberOptional.get();
             Store store = storeOptional.get();
 
-                //관심매장이 등록 되있지 않은 경우 새로 등록
-                FavoriteStore favoriteStore = new FavoriteStore();
-                favoriteStore.setMember(member);
-                favoriteStore.setStore(store);
-                favoriteStore = favoriteStoreRepository.save(favoriteStore);
+            //관심매장이 등록 되있지 않은 경우 새로 등록
+            FavoriteStore favoriteStore = new FavoriteStore();
+            favoriteStore.setMember(member);
+            favoriteStore.setStore(store);
+            favoriteStore = favoriteStoreRepository.save(favoriteStore);
 
-                return modelMapper.map(favoriteStore, FavoriteStoreDto.class);
-            }
+            return modelMapper.map(favoriteStore, FavoriteStoreDto.class);
+        }
 
         return favoriteStoreDto;
     }
 
+    // 관심매장 조회
+    public List<FavoriteStoreDto> selectStore() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        Optional<Member> memberOptional = memberRepository.findByUserId(user.getUsername());
 
+        if (memberOptional.isPresent()) {
+            Member member = memberOptional.get();
+            List<FavoriteStore> favoriteStores = favoriteStoreRepository.findByMember(member);
+            ModelMapper modelMapper = new ModelMapper();
+            return favoriteStores.stream()
+                    .map(favoriteStore -> modelMapper.map(favoriteStore, FavoriteStoreDto.class))
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
+    }
 }
+
+
+
+

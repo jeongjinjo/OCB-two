@@ -43,8 +43,16 @@ public class KakaoController {
                             .role(Role.USER)
                             .build()
                         );
-        }
+        }else {
+            // 이미 존재하는 회원의 경우 로그인 처리를 진행
+            UserDetails userDetails = kakaoDetailService.loadUserByUsername(email);
+            String accessToken = jwtUtil.generateAccessToken(userDetails);
+            String refreshToken = jwtUtil.generateRefreshToken(userDetails);
 
+            JwtTokenDto jwtTokenDto = new JwtTokenDto(member.getId(), accessToken, refreshToken);
+            return ResponseEntity.status(HttpStatus.OK).body(jwtTokenDto);
+        }
+        //신규 회원인 경우는 가입을 진행
         UserDetails userDetails = kakaoDetailService.loadUserByUsername(email);
         String accessToken = jwtUtil.generateAccessToken(userDetails);
         String refreshToken = jwtUtil.generateRefreshToken(userDetails);
