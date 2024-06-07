@@ -88,8 +88,8 @@ public class StoreController {
 
     @Operation(summary = "유저 아이디로 관심매장 적용")
     @PostMapping("/favoriteStore")
-    public ResponseEntity<FavoriteStoreDto> addFavoriteStore(@RequestBody FavoriteStoreDto favoriteStoreDto) {
-        FavoriteStoreDto saveFavoriteStore = storeService.addFavoriteStore(favoriteStoreDto);
+    public ResponseEntity<FavoriteFindDto> addFavoriteStore(@RequestBody FavoriteFindDto favoriteFindDto) {
+        FavoriteFindDto saveFavoriteStore = storeService.addFavoriteStore(favoriteFindDto);
         System.out.println(saveFavoriteStore);
         return ResponseEntity.ok(saveFavoriteStore);
     }

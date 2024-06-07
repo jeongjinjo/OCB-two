@@ -7,14 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class FavoriteStoreDto {
+public class FavoriteFindDto {
 
-
-        private Long StoreId;
-        private String address;
-        private String storeName;
-
-
+    private Long storeId;
 }
-
-
