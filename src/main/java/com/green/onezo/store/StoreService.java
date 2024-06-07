@@ -107,11 +107,16 @@ public class StoreService {
             favoriteStore.setMember(member);
             favoriteStore.setStore(store);
             favoriteStore = favoriteStoreRepository.save(favoriteStore);
+            System.out.println(favoriteStore);
 
-            return modelMapper.map(favoriteStore, FavoriteStoreDto.class);
+            FavoriteStoreDto favoriteStoreDto1 = modelMapper.map(favoriteStore, FavoriteStoreDto.class);
+            favoriteStoreDto1.setAddress(favoriteStore.getStore().getAddress());
+            System.out.println(favoriteStoreDto1);
+
+            return favoriteStoreDto1;
         }
 
-        return favoriteStoreDto;
+        return null;
     }
 
     // 관심매장 조회
@@ -125,7 +130,11 @@ public class StoreService {
             List<FavoriteStore> favoriteStores = favoriteStoreRepository.findByMember(member);
             ModelMapper modelMapper = new ModelMapper();
             return favoriteStores.stream()
-                    .map(favoriteStore -> modelMapper.map(favoriteStore, FavoriteStoreDto.class))
+                    .map(favoriteStore -> {
+                        FavoriteStoreDto favoriteStoreDto= modelMapper.map(favoriteStore, FavoriteStoreDto.class);
+                        favoriteStoreDto.setAddress(favoriteStore.getStore().getAddress());
+                        return favoriteStoreDto;
+                    })
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();

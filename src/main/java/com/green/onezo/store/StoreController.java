@@ -89,6 +89,7 @@ public class StoreController {
     @PostMapping("/favoriteStore")
     public ResponseEntity<FavoriteStoreDto> addFavoriteStore(@RequestBody FavoriteStoreDto favoriteStoreDto) {
         FavoriteStoreDto saveFavoriteStore = storeService.addFavoriteStore(favoriteStoreDto);
+        System.out.println(saveFavoriteStore);
         return ResponseEntity.ok(saveFavoriteStore);
     }
 
