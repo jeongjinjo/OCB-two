@@ -92,6 +92,7 @@ public class StoreController {
         return ResponseEntity.ok(saveFavoriteStore);
     }
 
+
     @Operation(summary = "관심매장 조회")
     @GetMapping("/list")
     public ResponseEntity<List<FavoriteStoreDto>> getFavoriteStores() {
