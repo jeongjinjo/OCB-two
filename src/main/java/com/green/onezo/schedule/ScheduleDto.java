@@ -1,5 +1,6 @@
 package com.green.onezo.schedule;
 
+import com.green.onezo.store.Store;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -10,7 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ScheduleDto {
-    private Long schedule_id;
+    private Long scheduleId;
     private Long storeId;
     private LocalDate start_date;
     private LocalDate end_date;

@@ -21,7 +21,7 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @Operation(summary = "store_id 검색을 통해 매장 일정 조회")
-    @GetMapping("/schedule/{storeId}")
+    @GetMapping("/{storeId}")
     public ResponseEntity<List<ScheduleDto>> getSchedulesByStoreId(@Parameter (description="매장 ID",required = true)
             @PathVariable Long storeId){
         List<ScheduleDto> schedules = scheduleService.getSchedulesByStoreId(storeId);

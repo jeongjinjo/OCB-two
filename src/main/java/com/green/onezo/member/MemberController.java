@@ -23,6 +23,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
+@CrossOrigin(origins = "*")
 public class MemberController {
 
     private final MemberService memberService;

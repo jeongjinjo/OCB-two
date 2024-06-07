@@ -27,6 +27,7 @@ public class KakaoDetailService implements UserDetailsService {
         GrantedAuthority authority = new SimpleGrantedAuthority(member.getRole().toString());
 
         return new User(
+
                 member.getEmail(),
                 member.getNickname(),
                 Collections.singleton(authority)
