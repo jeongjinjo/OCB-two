@@ -10,6 +10,11 @@ spring:
   jwt:
     AccessTokenSecret: 7KCV7J2A7JWg7JaR6rCA7JiB7KCV7KeE7KGw6rOg7LCs7JqwY2F0ZG9ncjhHbdSN23nf2588NUnsdh
 
+    redis:
+      host: localhost
+      port: 6379
+
+
 
   jpa:
     database: mysql

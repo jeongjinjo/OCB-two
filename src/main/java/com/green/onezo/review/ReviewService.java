@@ -32,7 +32,9 @@ public class ReviewService {
         Optional<Member> memberOptional = memberRepository.findByUserId(user.getUsername());
         Optional<Store> storeOptional = storeRepository.findById(reviewDto.getStoreId());
 
-        if (memberOptional.isPresent() && storeOptional.isPresent()) {
+        if (memberOptional.isEmpty() && storeOptional.isEmpty()) {
+            return null;
+            }
             Member member = memberOptional.get();
             Store store = storeOptional.get();
             List<Review> reviewList = reviewRepository.findByMemberId(member.getId());
@@ -41,9 +43,8 @@ public class ReviewService {
                 review.setMember(member);
                 review.setStore(store);
                 review = reviewRepository.save(review);
-
                 return modelMapper.map(review, ReviewDto.class);
-            }else {
+            } else {
                 Review revdvo = reviewList.get(0);
                 revdvo.setComment(reviewDto.getComment());
                 revdvo.setStar(reviewDto.getStar());
@@ -51,10 +52,8 @@ public class ReviewService {
                 revdvo = reviewRepository.save(revdvo);
                 return modelMapper.map(revdvo, ReviewDto.class);
             }
-        }
-        return reviewDto;
-            }
-        }
+    }
+}
 
 
 

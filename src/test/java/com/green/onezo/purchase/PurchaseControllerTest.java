@@ -30,7 +30,6 @@ class PurchaseControllerTest {
     @ValueSource(longs = {1L})
     void getRecord(Long id) {
         PurchaseDto purchaseDto = new PurchaseDto();
-        purchaseDto.setId(id);
         System.out.println(purchaseDto);
     }
 
