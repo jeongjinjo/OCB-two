@@ -50,6 +50,7 @@ public class Member {
     private ResignYn resignYn;
 
     @OneToMany(mappedBy = "member")
+
     private List<Pay> pays = new ArrayList<>();
 
     @Column(unique = true)

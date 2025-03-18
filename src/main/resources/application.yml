@@ -11,8 +11,13 @@ spring:
     AccessTokenSecret: 7KCV7J2A7JWg7JaR6rCA7JiB7KCV7KeE7KGw6rOg7LCs7JqwY2F0ZG9ncjhHbdSN23nf2588NUnsdh
 
     redis:
-      host: localhost
+      host: 127.0.0.1
       port: 6379
+
+  data:
+    redis:
+      repositories:
+        enabled: false
 
 
 
